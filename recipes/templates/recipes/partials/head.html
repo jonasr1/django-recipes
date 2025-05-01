@@ -74,12 +74,32 @@
         }
 
         html {
-            font-size: 62.5%
+            font-size: 62.5%;
         }
 
         body {
             font-size: 1.6rem;
             font-family: var(--font-primary);
+            background: var(--color-gray-1);
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: var(--font-headings);
+        }
+
+        .container {
+            max-width: 144rem;
+            margin: 0 auto;
+            padding: var(--spacing-gutter-medium);
+        }
+
+        .main-header-container {
+            background: var(--color-primary-dark);
         }
 
         .main-logo {
@@ -94,27 +114,8 @@
             margin: 0 auto;
         }
 
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
-            font-family: var(--font-headings);
-        }
-
         .main-logo-icon {
             margin-right: 2rem;
-        }
-
-        .container {
-            max-width: 144rem;
-            margin: 0 auto;
-            padding: var(--spacing-gutter-large);
-        }
-
-        .main-header-container {
-            background: var(--color-primary-dark);
         }
 
         .search-form {
@@ -126,8 +127,8 @@
             transition: all 300ms ease-in-out;
         }
 
-        .search-button,
-        .search-input {
+        .search-input,
+        .search-button {
             border: none;
             background: none;
             outline: none;
@@ -157,7 +158,7 @@
         }
 
         .search-form:focus-within .search-button {
-            color: var(--color-primary)
+            color: var(--color-primary);
         }
 
         .main-content {
@@ -167,7 +168,26 @@
         .main-content-list {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-            gap: var(--spacing-gutter-large)
+            gap: var(--spacing-gutter-large);
+        }
+
+        .recipe {
+            background: var(--color-white);
+            box-shadow: -5px 5px 10px rgba(0, 0, 0, .2);
+            transform: scale(1);
+            transition: all 300ms ease-in-out;
+        }
+
+        .recipe img {
+            max-width: 100%;
+        }
+
+        .recipe-list-item {
+            max-width: 64rem;
+        }
+
+        .recipe:hover {
+            transform: scale(1.02);
         }
     </style>
 </head>
