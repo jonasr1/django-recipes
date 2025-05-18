@@ -77,12 +77,6 @@ celerybeat-schedule.*
 
 # Environments
 .env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
 
 # mkdocs documentation
 /site
@@ -127,4 +121,5 @@ _local_settings.py
 gunicorn-error-log
 db.sqlite3
 db copy.sqlite3
-static
+/static/
+/!recipes/static/
