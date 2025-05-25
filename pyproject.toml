@@ -15,3 +15,10 @@ pillow = "^11.2.1"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+
+[tool.pyrefly]
+python_interpreter = "/home/jonas/.cache/pypoetry/virtualenvs/project1-my0NZDiB-py3.12/bin/python"
+
+[tool.pyrefly.errors]
+missing-attribute = false
