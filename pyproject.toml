@@ -10,11 +10,16 @@ python = "^3.12"
 django = "^5.2"
 faker = "^37.3.0"
 pillow = "^11.2.1"
+pytest = "^8.3.5"
+pytest-django = "^4.11.1"
 
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+ignore_missing_imports = true
 
 
 [tool.pyrefly]
@@ -22,3 +27,15 @@ python_interpreter = "/home/jonas/.cache/pypoetry/virtualenvs/project1-my0NZDiB-
 
 [tool.pyrefly.errors]
 missing-attribute = false
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "core.settings"
+python_files = "test.py tests.py test_*.py *_test.py tests_*.py *_tests.py" # Opcional: padrões de arquivos de teste
+addopts = """
+    --doctest-modules 
+    --strict-markers
+    """
+markers = [
+    "slow: Run tests that are slow",
+    "fast: Run fast tests"
+]
