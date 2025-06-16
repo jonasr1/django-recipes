@@ -4,8 +4,6 @@ from recipes.models import Category, Recipe, User
 
 
 class RecipeTestBase(TestCase):
-    def setUp(self) -> None:
-        return super().setUp()
 
     def make_category(self, name: str="category") -> Category:
         return Category.objects.create(name=name)
@@ -20,7 +18,7 @@ class RecipeTestBase(TestCase):
         )
 
     def make_recipe(
-        self, category: dict | None=None, author: dict | None = None,
+        self, category: dict[str, str] | None=None, author: dict[str, str] | None = None,  # noqa: E501
         title: str="Recipe title", description: str="Recipe description",
         slug: str="recipe-slug", preparation_time: int=10,
         preparation_time_unit: str="Minutos", servings: int=5,

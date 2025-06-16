@@ -60,7 +60,7 @@ class RecipeViewsTest(RecipeTestBase):
         #  Need a recipe for this test
         recipe = self.make_recipe(is_published=False)
         response = self.client.get(reverse(
-                "recipes:category", kwargs={"category_id": recipe.category.id})
+                "recipes:category", kwargs={"category_id": recipe.category.id}) # type: ignore
         )
         self.assertEqual(response.status_code, 404)
 
@@ -74,7 +74,7 @@ class RecipeViewsTest(RecipeTestBase):
 
     def test_recipe_detail_view_returnss_404_if_no_recipes_found(self) -> None:
         response = self.client.get(
-            reverse("recipes:recipe", kwargs={"id": 1000})
+            reverse("recipes:recipe", kwargs={"pk": 1000})
         )
         self.assertEqual(response.status_code, 404)
 
@@ -82,7 +82,7 @@ class RecipeViewsTest(RecipeTestBase):
         needed_title = "This is a detail page - It load one recipe"
         #  need a recipe for this test
         self.make_recipe(title=needed_title)
-        response = self.client.get(reverse("recipes:recipe", kwargs={"id": 1}))
+        response = self.client.get(reverse("recipes:recipe", kwargs={"pk": 1}))
         content = response.content.decode("utf-8")
         self.assertIn(needed_title, content)
 
@@ -91,6 +91,6 @@ class RecipeViewsTest(RecipeTestBase):
         #  Need a recipe for this test
         recipe = self.make_recipe(is_published=False)
         response = self.client.get(
-            reverse("recipes:recipe", kwargs={"id": recipe.id})
+            reverse("recipes:recipe", kwargs={"pk": recipe.id})
         )
         self.assertEqual(response.status_code, 404)
