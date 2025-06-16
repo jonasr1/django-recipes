@@ -60,7 +60,7 @@ class RecipeViewsTest(RecipeTestBase):
         #  Need a recipe for this test
         recipe = self.make_recipe(is_published=False)
         response = self.client.get(reverse(
-                "recipes:category", kwargs={"category_id": recipe.category.id}) # type: ignore
+                "recipes:category", kwargs={"category_id": recipe.category.id})  # type: ignore  # noqa: E501, RUF100
         )
         self.assertEqual(response.status_code, 404)
 

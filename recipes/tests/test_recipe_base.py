@@ -5,12 +5,16 @@ from recipes.models import Category, Recipe, User
 
 class RecipeTestBase(TestCase):
 
-    def make_category(self, name: str="category") -> Category:
+    def make_category(self, name: str = "category") -> Category:
         return Category.objects.create(name=name)
 
     def make_author(
-        self, first_name: str="user", last_name: str="name", username: str="username",
-        password: str="1234567", email: str="username@gmail.com"  # noqa: S107
+        self,
+        first_name: str = "user",
+        last_name: str = "name",
+        username: str = "username",
+        password: str = "1234567",  # noqa: S107
+        email: str = "username@gmail.com",
     ) -> User:
         return User.objects.create_user(
             first_name=first_name, last_name=last_name, username=username,
@@ -18,12 +22,19 @@ class RecipeTestBase(TestCase):
         )
 
     def make_recipe(
-        self, category: dict[str, str] | None=None, author: dict[str, str] | None = None,  # noqa: E501
-        title: str="Recipe title", description: str="Recipe description",
-        slug: str="recipe-slug", preparation_time: int=10,
-        preparation_time_unit: str="Minutos", servings: int=5,
-        servings_unit: str="Porções", preparation_steps: str="Recipe Preparation Steps",
-        *, preparation_steps_is_html: bool=False, is_published: bool=True
+        self,
+        category: dict[str, str] | None = None,
+        author: dict[str, str] | None = None,
+        title: str = "Recipe title",
+        description: str = "Recipe description",
+        slug: str = "recipe-slug",
+        preparation_time: int = 10,
+        preparation_time_unit: str = "Minutos",
+        servings: int = 5,
+        servings_unit: str = "Porções",
+        preparation_steps: str = "Recipe Preparation Steps",
+        *, preparation_steps_is_html: bool = False,
+        is_published: bool = True,
     ) -> Recipe:
         if category is None:
             category = {}
