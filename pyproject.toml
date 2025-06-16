@@ -4,7 +4,6 @@ version = "0.1.0"
 description = ""
 authors = ["Your Name <you@example.com>"]
 
-
 [tool.poetry.dependencies]
 python = "^3.12"
 django = "^5.2"
@@ -13,9 +12,9 @@ pillow = "^11.2.1"
 pytest = "^8.3.5"
 pytest-django = "^4.11.1"
 
-
 [tool.poetry.group.dev.dependencies]
 pytest-watch = "^4.2.0"
+parameterized = "^0.9.0"
 
 [build-system]
 requires = ["poetry-core"]
@@ -24,12 +23,12 @@ build-backend = "poetry.core.masonry.api"
 [tool.mypy]
 ignore_missing_imports = true
 
-
 [tool.pyrefly]
 python_interpreter = "/home/jonas/Projects/django-curso-drf/project1/.venv/bin/python"
 
 [tool.pyrefly.errors]
 missing-attribute = false
+bad-assignment = false
 
 # ============================
 # Lint e formatação (Ruff)
@@ -40,7 +39,7 @@ target-version = "py312"
 fix = true
 show-fixes = true
 indent-width = 4
-exclude = ["__pycache__"]
+exclude = ["__pycache__", "migrations"]
 
 [tool.ruff.lint]
 select = [

@@ -16,8 +16,8 @@ def category(request: HttpRequest, category_id: int) -> HttpResponse:
         Recipe.objects.filter(is_published=True, category__id=category_id)
         .order_by("-id")
     )
-    category = recipes[0].category
-    title = f"{category.name if category else 'Unknown'}"
+    category_obj = recipes[0].category
+    title = f"{category_obj.name if category_obj else 'Unknown'}"
     return render(request, "recipes/pages/category.html", context={
         "recipes": recipes, "title": f"{title} - Category "
         }
@@ -25,8 +25,8 @@ def category(request: HttpRequest, category_id: int) -> HttpResponse:
 
 
 def recipe(request: HttpRequest, pk: int) -> HttpResponse:
-    recipe = get_object_or_404(Recipe, pk=pk, is_published=True)
+    recipe_obj = get_object_or_404(Recipe, pk=pk, is_published=True)
     return render(request, "recipes/pages/recipe-view.html", context={
-        "recipe": recipe, "is_detail_page": True
+        "recipe": recipe_obj, "is_detail_page": True
         }
     )
