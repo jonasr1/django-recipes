@@ -7,11 +7,15 @@
     <title>{% block title %}{% endblock title %} | Recipes</title>
 </head>
 <body>
-    {% include "recipes/partials/header.html" %}
-    {% include "recipes/partials/search.html" %}
-    <main class="content-container">
-        {% block content %}{% endblock content %}
-    </main>
-    {% include "recipes/partials/footer.html" %}
+    <div class="page-wrapper">
+        {% include "recipes/partials/header.html" %}
+        {% include "recipes/partials/search.html" %}
+
+        <main class="content-container">
+            {% block content %}{% endblock content %}
+        </main>
+        
+        {% include "recipes/partials/footer.html" %}
+    </div>
 </body>
 </html>
