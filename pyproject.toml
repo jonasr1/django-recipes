@@ -16,13 +16,13 @@ pytest-django = "^4.11.1"
 pytest-watch = "^4.2.0"
 parameterized = "^0.9.0"
 coverage = "^7.9.1"
+django-stubs = "^5.2.1"
+mypy-extensions = "^1.1.0"
+mypy = "^1.16.1"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.mypy]
-ignore_missing_imports = true
 
 [tool.pyrefly]
 python_interpreter = "/home/jonas/Projects/django-curso-drf/project1/.venv/bin/python"
@@ -30,6 +30,7 @@ python_interpreter = "/home/jonas/Projects/django-curso-drf/project1/.venv/bin/p
 [tool.pyrefly.errors]
 missing-attribute = false
 bad-assignment = false
+bad-return = false
 
 # ============================
 # Lint e formatação (Ruff)
