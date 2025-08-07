@@ -42,7 +42,7 @@ target-version = "py312"
 fix = true
 show-fixes = true
 indent-width = 4
-exclude = ["__pycache__", "migrations"]
+exclude = ["__pycache__", "migrations", ".venv"]
 
 [tool.ruff.lint]
 select = [
