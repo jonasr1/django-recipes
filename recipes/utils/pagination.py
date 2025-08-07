@@ -1,7 +1,10 @@
 import math
 
+from django.core.paginator import Page, Paginator
+from django.http.request import HttpRequest
 
-def make_pagination(
+
+def make_pagination_range(
     page_range: list[int], range_size: int, current_page: int
 ) -> dict[str, bool | int | list[int]]:
     if not page_range:
@@ -46,3 +49,19 @@ def make_pagination(
         "first_page_out_of_range": current_page > middle_offset,
         "last_page_out_of_range": end_index < total_pages,
     }
+
+
+def make_pagination(
+    request: HttpRequest, queryset, per_page: int, range_size: int = 4
+) -> tuple[Page, int]:
+    try:
+        page_number = int(request.GET.get("page", 1))
+    except ValueError:
+        page_number = 1
+    paginator = Paginator(queryset, per_page)
+    page_obj = paginator.get_page(page_number)
+
+    pagination_range = make_pagination_range(
+        list(paginator.page_range), range_size, page_number
+    )
+    return page_obj, pagination_range

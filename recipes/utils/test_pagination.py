@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from recipes.utils.pagination import make_pagination
+from recipes.utils.pagination import make_pagination_range
 
 
 class PaginationTest(TestCase):
@@ -40,11 +40,11 @@ class PaginationTest(TestCase):
     def test_invalid_current_page(self) -> None:
         for current_page in [0, 30]:
             with self.subTest(current_page=current_page), self.assertRaises(ValueError):
-                make_pagination(
+                make_pagination_range(
                     list(range(1, 21)), range_size=4, current_page=current_page
                 )
 
     def get_pagination(self, current_page: int, range_size: int = 4) -> list[int]:
-        return make_pagination(list(range(1, 21)), range_size, current_page)[
+        return make_pagination_range(list(range(1, 21)), range_size, current_page)[
             "pagination"
         ]
