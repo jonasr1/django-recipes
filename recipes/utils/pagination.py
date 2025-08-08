@@ -1,6 +1,8 @@
 import math
+from typing import Any
 
 from django.core.paginator import Page, Paginator
+from django.db.models.query import QuerySet
 from django.http.request import HttpRequest
 
 
@@ -52,7 +54,7 @@ def make_pagination_range(
 
 
 def make_pagination(
-    request: HttpRequest, queryset, per_page: int, range_size: int = 4
+    request: HttpRequest, queryset: QuerySet[Any], per_page: int, range_size: int = 4
 ) -> tuple[Page, int]:
     try:
         page_number = int(request.GET.get("page", 1))

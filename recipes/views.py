@@ -1,7 +1,7 @@
 from django.db.models import Q
 from django.http import HttpRequest, HttpResponse
 from django.http.response import Http404
-from django.shortcuts import get_list_or_404, get_object_or_404, render
+from django.shortcuts import get_object_or_404, render
 
 from recipes.models import Recipe
 from recipes.utils.pagination import make_pagination
@@ -18,19 +18,20 @@ def home(request: HttpRequest) -> HttpResponse:
 
 
 def category(request: HttpRequest, category_id: int) -> HttpResponse:
-    recipes = get_list_or_404(
-        Recipe.objects.filter(is_published=True, category__id=category_id).order_by(
-            "-id"
-        )
-    )
+    recipes = Recipe.objects.filter(
+        is_published=True, category__id=category_id
+    ).order_by("-id")
+    if not recipes.exists():
+        raise Http404
     category_obj = recipes[0].category
     title = f"{category_obj.name if category_obj else 'Unknown'}"
     page_obj, pagination_range = make_pagination(request, recipes, 9)
-
     return render(
-        request, "recipes/pages/category.html",
+        request,
+        "recipes/pages/category.html",
         context={
-            "recipes": page_obj, "title": f"{title} - Category ",
+            "recipes": page_obj,
+            "title": f"{title} - Category ",
             "pagination_range": pagination_range,
         },
     )
