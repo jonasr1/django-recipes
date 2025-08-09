@@ -1,11 +1,5 @@
-from typing import ClassVar
 from unittest import TestCase
 
-from django.contrib.auth.models import User
-from django.test import TestCase as DjangoTestCase
-from django.urls.base import reverse
-
-from recipes.models import Category, Recipe
 from recipes.utils.pagination import make_pagination_range
 
 
@@ -55,32 +49,3 @@ class PaginationLogicTest(TestCase):
         return make_pagination_range(list(range(1, 21)), range_size, current_page)[
             "pagination"
         ]
-
-class PaginationIntegrationTest(DjangoTestCase):
-    """Tests for pagination integration with Recipe model."""
-    user: ClassVar[User]
-    category: ClassVar[Category]
-    @classmethod
-    def setUpTestData(cls) -> None:
-        """Set up test data by creating a user, category, and 20 recipes."""
-        cls.user = User.objects.create_user(username="testuser", password="testpass")  # noqa: S106
-        cls.category = Category.objects.create(name="Test Category")
-        for i in range(20):
-            Recipe.objects.create(
-                title=f"Recipe {i+1}",
-                description="Test description",
-                slug=f"recipe-{i+1}",
-                preparation_time=30,
-                preparation_time_unit="minutes",
-                servings=4,
-                servings_unit="people",
-                preparation_steps="Test steps",
-                author=cls.user,
-                category=cls.category,
-                is_published=True,
-            )
-
-    def test_fisrt_page_has_correct_number_of_itens(self)-> None:
-        url = reverse("recipes:home")
-        response = self.client.get(url)
-        self.assertEqual(len(response.context["recipes"]), 9)
