@@ -1,3 +1,6 @@
+from typing import Final
+
+from decouple import config
 from django.db.models import Q
 from django.http import HttpRequest, HttpResponse
 from django.http.response import Http404
@@ -6,10 +9,12 @@ from django.shortcuts import get_object_or_404, render
 from recipes.models import Recipe
 from recipes.utils.pagination import make_pagination
 
+PER_PAGE: Final[int]= config("PER_PAGE", default=6 )
+
 
 def home(request: HttpRequest) -> HttpResponse:
     recipes = Recipe.objects.filter(is_published=True).order_by("-id")
-    page_obj, pagination_range = make_pagination(request, recipes, 9)
+    page_obj, pagination_range = make_pagination(request, recipes, PER_PAGE)
     return render(
         request,
         "recipes/pages/home.html",
@@ -25,7 +30,7 @@ def category(request: HttpRequest, category_id: int) -> HttpResponse:
         raise Http404
     category_obj = recipes[0].category
     title = f"{category_obj.name if category_obj else 'Unknown'}"
-    page_obj, pagination_range = make_pagination(request, recipes, 9)
+    page_obj, pagination_range = make_pagination(request, recipes, PER_PAGE)
     return render(
         request,
         "recipes/pages/category.html",
@@ -56,7 +61,7 @@ def search(request: HttpRequest) -> HttpResponse:
             is_published=True,
         )
     ).order_by("-id")
-    page_obj, pagination_range = make_pagination(request, recipes, 9)
+    page_obj, pagination_range = make_pagination(request, recipes, PER_PAGE)
 
     return render(
         request,
