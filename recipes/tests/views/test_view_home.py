@@ -1,4 +1,3 @@
-from unittest.mock import patch
 
 from django.urls import resolve, reverse
 
@@ -44,21 +43,4 @@ class RecipeHomeViewTest(RecipeTestBase):
         )
 
     def test_recipe_home_is_paginated(self) -> None:
-        for i in range(8):
-            kwargs = {"slug": f"r{i}", "author": {"username": f"u{i}"} }
-            self.make_recipe(**kwargs)
-        with patch("recipes.views.PER_PAGE", new=3):
-            response = self.client.get(reverse("recipes:home"))
-            self.assertIn("recipes", response.context)
-            recipes = response.context["recipes"]
-            paginator = recipes.paginator
-            self.assertEqual(paginator.num_pages, 3)  # Check number of pages
-            # Check items per page
-            self.assertEqual(len(paginator.get_page(1)), 3)
-            self.assertEqual(len(paginator.get_page(2)), 3)
-            self.assertEqual(len(paginator.get_page(3)), 2)
-            all_ids: set[int] = set()  # Check that there is no overlap between pages
-            for page in paginator.page_range:
-                ids = {r.id for r in paginator.get_page(page)}
-                self.assertTrue(all_ids.isdisjoint(ids))
-                all_ids.update(ids)
+        self.assertPaginationWorks("recipes:home", total_items=8, per_page=3)

@@ -45,3 +45,11 @@ class RecipeSearchViewTest(RecipeTestBase):
 
         self.assertIn(member=recipe1, container=response_both.context["recipes"])
         self.assertIn(member=recipe2, container=response_both.context["recipes"])
+
+    def test_recipe_search_is_paginated(self) -> None:
+        term = "bolo"
+        self.assertPaginationWorks(
+            "recipes:search",
+            query_params={"q": term},
+            recipe_kwargs={"title": f"{term} incrível"},
+        )
