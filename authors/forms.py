@@ -1,6 +1,7 @@
 # ruff: noqa: RUF012
 from django import forms
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 
 
 def add_attr(field: forms.Field, attr_name: str, new_attr_val: str)-> None:
@@ -54,3 +55,43 @@ class RegisterForm(forms.ModelForm):
                 attrs={"placeholder": "Type your password here"}
             ),
         }
+
+    def clean_password(self):
+        data = self.cleaned_data.get("password")
+
+        if "atenção" in data:
+            msg = "Não digite %(pipoca)s no campo password"
+            raise ValidationError(
+                msg,
+                code="invalid",
+                params={"pipoca": '"atenção"'}
+            )
+
+        return data
+
+    def clean_first_name(self):
+        data = self.cleaned_data.get("first_name")
+        if "John Doe" in data:
+            msg = "Não digite %(value)s no campo first name"
+            raise ValidationError(
+                msg,
+                code="invalid",
+                params={"value": '"John Doe"'}
+            )
+        return data
+
+    def clean(self) -> None:
+        cleaned_data = super().clean()
+        password = cleaned_data.get("password") if cleaned_data else None
+        password2 = cleaned_data.get("password2") if cleaned_data else None
+        if password != password2:
+            password_confirmation_error = ValidationError(
+                "Password and password2 must be equal",
+                code="invalid"
+            )
+            raise ValidationError({
+                "password": password_confirmation_error,
+                "password2": [
+                    password_confirmation_error,
+                ],
+            })
