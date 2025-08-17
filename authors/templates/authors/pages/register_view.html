@@ -4,16 +4,18 @@
 
 {% block content %}
   <div class="main-content center container">
-    <h2>Register {{ request.session.number }}</h2>
-    {% if form.errors %}
-      <div class="form-content form-content-grid">
-        <div class="form-group">
-          <div class="message message-error">
-          There are errors in the form, please fix them and send again.
-        </div>
-      </div>
-    {% endif %}
+    <h2>Register</h2>
   </div>
+
+  {% if form.errors %}
+  <div class="form-content">
+    <div class="message message-error">
+      There are errors in the form, please fix them and send again.
+    </div>
+  </div>
+  {% endif %}
+
+  {% include "recipes/partials/messages.html" %}
 
   <div class="main-content container">
     <form action="{% url "authors:create" %}" method="post">
