@@ -5,6 +5,8 @@ from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
+EMAIL_HELP_TEXT = "The e-mail must be valid"
+
 
 def add_attr(field: forms.Field, attr_name: str, new_attr_val: str) -> None:
     existing_attrs = field.widget.attrs.get(attr_name, "")
@@ -34,24 +36,35 @@ class RegisterForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         add_placeholder(self.fields["username"], "Your username")
         add_placeholder(self.fields["email"], "Your e-mail")
-        add_placeholder(self.fields["first_name"], "Ex: John")
-        add_placeholder(self.fields["last_name"], "Ex: Doe")
+        add_placeholder(self.fields["first_name"], "Ex.: John")
+        add_placeholder(self.fields["last_name"], "Ex.: Doe")
+        add_placeholder(self.fields["password"], "Type your password")
+        add_placeholder(self.fields["password2"], "Repeat your password")
 
+    first_name = forms.CharField(
+        error_messages={"required": "Write your first name"},
+    )
+    last_name = forms.CharField(
+        error_messages={"required": "Write your last name"},
+    )
+    email = forms.EmailField(
+        error_messages={"required": "E-mail is required"},
+        help_text=EMAIL_HELP_TEXT
+    )
     password = forms.CharField(
-        required=True,
-        widget=forms.PasswordInput(attrs={"placeholder": "Type your password"}),
+        error_messages={"required": "Password must not be empty"},
+        widget=forms.PasswordInput(),
         validators=[strong_password],
     )
     password2 = forms.CharField(
-        required=True,
-        widget=forms.PasswordInput(attrs={"placeholder": "Repeat your password"}),
+        error_messages={"required": "Please, repeat your password"},
+        widget=forms.PasswordInput(),
         validators=[strong_password],
     )
 
     class Meta:
         model = User
         fields = ("first_name", "last_name", "username", "email", "password")
-        help_texts = {"email": "The e-mail must be valid"}
         error_messages = {"username": {"required": "This field must not be empty."}}
 
     def clean(self) -> None:
@@ -63,9 +76,8 @@ class RegisterForm(forms.ModelForm):
                 "Password and password2 must be equal", code="invalid"
             )
             raise ValidationError({
-                    "password": password_confirmation_error,
-                    "password2": [
-                        password_confirmation_error,
-                    ],
-                }
-            )
+                "password": password_confirmation_error,
+                "password2": [
+                    password_confirmation_error,
+                ],
+            })

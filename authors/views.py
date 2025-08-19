@@ -11,6 +11,7 @@ def register_view(request: HttpRequest) -> HttpResponse:
     form = RegisterForm(register_form_data)
     return render(request, "authors/pages/register_view.html", {"form": form})
 
+
 def register_create(request: HttpRequest) -> HttpResponse:
     if not request.POST:
         raise Http404
@@ -20,5 +21,5 @@ def register_create(request: HttpRequest) -> HttpResponse:
     if form.is_valid():
         form.save()
         messages.success(request, "Your user is created, please log in.")
-        del(request.session["register_form_data"])
+        del request.session["register_form_data"]
     return redirect("authors:register")
