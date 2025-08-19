@@ -4,7 +4,8 @@ from django.test import TestCase as DjangoTestCase
 from django.urls import reverse
 from parameterized import parameterized
 
-from authors.forms import EMAIL_HELP_TEXT, RegisterForm
+from authors.constants import EMAIL_HELP_TEXT
+from authors.forms import RegisterForm
 
 
 class AuthorRegisterFormUnitTest(TestCase):
@@ -48,7 +49,7 @@ class AuthorRegisterFormIntegrationTest(DjangoTestCase):
         return super().setUp()
 
     @parameterized.expand([
-        ("username", "This field must not be empty."),
+        ("username", "This field must not be empty"),
         ("first_name", "Write your first name"),
         ("last_name", "Write your last name"),
         ("email", "E-mail is required"),
@@ -59,4 +60,23 @@ class AuthorRegisterFormIntegrationTest(DjangoTestCase):
         self.form_data[field] = ""
         url = reverse("authors:create")
         response = self.client.post(url, data=self.form_data, follow=True)
+        self.assertIn(msg, response.context["form"].errors.get(field))
+        self.assertIn(msg, response.content.decode("utf-8"))
+
+    def test_username_field_min_length_should_be_4(self) -> None:
+        self.form_data["username"] = "joa"
+        url = reverse("authors:create")
+        response = self.client.post(url, data=self.form_data, follow=True)
+        username_len = len(self.form_data["username"])
+        msg = f"Ensure this value has at least 4 characters (it has {username_len})."
+        self.assertIn(msg, response.context["form"].errors.get("username"))
+        self.assertIn(msg, response.content.decode("utf-8"))
+
+    def test_username_field_max_length_should_be_150(self) -> None:
+        self.form_data["username"] = "A" * 151
+        url = reverse("authors:create")
+        response = self.client.post(url, data=self.form_data, follow=True)
+        username_len = len(self.form_data["username"])
+        msg = f"Ensure this value has at most 150 characters (it has {username_len})."
+        self.assertIn(msg, response.context["form"].errors.get("username"))
         self.assertIn(msg, response.content.decode("utf-8"))

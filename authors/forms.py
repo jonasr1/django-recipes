@@ -1,11 +1,10 @@
-# ruff: noqa: RUF012
 import re
 
 from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
-EMAIL_HELP_TEXT = "The e-mail must be valid"
+from authors.constants import COMMON_LENGTH_ERRORS, EMAIL_HELP_TEXT, PLACEHOLDERS
 
 
 def add_attr(field: forms.Field, attr_name: str, new_attr_val: str) -> None:
@@ -34,13 +33,21 @@ def strong_password(password: str) -> None:
 class RegisterForm(forms.ModelForm):
     def __init__(self, *args, **kwargs) -> None:  # noqa: ANN002, ANN003
         super().__init__(*args, **kwargs)
-        add_placeholder(self.fields["username"], "Your username")
-        add_placeholder(self.fields["email"], "Your e-mail")
-        add_placeholder(self.fields["first_name"], "Ex.: John")
-        add_placeholder(self.fields["last_name"], "Ex.: Doe")
-        add_placeholder(self.fields["password"], "Type your password")
-        add_placeholder(self.fields["password2"], "Repeat your password")
+        for field, placeholder in PLACEHOLDERS.items():
+            add_placeholder(self.fields[field], placeholder)
 
+    username = forms.CharField(
+        help_text=(
+            "Username must have letters, numbers or one of those @.+-_. "
+            "The length should be between 4 and 150 characters."
+        ),
+        error_messages={
+            "required": "This field must not be empty",
+            **COMMON_LENGTH_ERRORS,
+        },
+        min_length=4,
+        max_length=150,
+    )
     first_name = forms.CharField(
         error_messages={"required": "Write your first name"},
     )
@@ -65,7 +72,6 @@ class RegisterForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ("first_name", "last_name", "username", "email", "password")
-        error_messages = {"username": {"required": "This field must not be empty."}}
 
     def clean(self) -> None:
         cleaned_data = super().clean()
