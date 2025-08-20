@@ -4,7 +4,12 @@ from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
-from authors.constants import COMMON_LENGTH_ERRORS, EMAIL_HELP_TEXT, PLACEHOLDERS
+from authors.constants import (
+    COMMON_LENGTH_ERRORS,
+    EMAIL_HELP_TEXT,
+    PASSWORD_COMPLEXITY_ERROR,
+    PLACEHOLDERS,
+)
 
 
 def add_attr(field: forms.Field, attr_name: str, new_attr_val: str) -> None:
@@ -19,11 +24,7 @@ def add_placeholder(field: forms.Field, placeholder_val: str) -> None:
 def strong_password(password: str) -> None:
     regex = re.compile(r"(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}$")
     if not regex.match(password):
-        password_regex_error = (
-            "Password must have at least one uppercase letter, "  # noqa: S105
-            "one lowercase letter and one number. The length should be"
-            "at least 8 characters."
-        )
+        password_regex_error = PASSWORD_COMPLEXITY_ERROR
         raise ValidationError(
             (password_regex_error),
             code="invalid",

@@ -19,3 +19,9 @@ COMMON_LENGTH_ERRORS = {
         "(it has %(show_value)d)."
     ),
 }
+
+PASSWORD_COMPLEXITY_ERROR = (
+    "Password must have at least one uppercase letter, "  # noqa: S105
+    "one lowercase letter and one number. The length should be "
+    "at least 8 characters."
+)
