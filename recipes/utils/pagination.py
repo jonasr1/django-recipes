@@ -20,7 +20,7 @@ def make_pagination_range(
             "end_index": 0,
             "first_page_out_of_range": False,
             "last_page_out_of_range": False,
-    }
+        }
     if range_size <= 0:
         msg = "range_size must be greater than 0"
         raise ValueError(msg)

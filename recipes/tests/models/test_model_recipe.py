@@ -27,10 +27,10 @@ class RecipeModelTest(RecipeTestBase):
         return recipe
 
     @parameterized.expand([
-            ("title", 65),
-            ("description", 165),
-            ("servings_unit", 65),
-            ("preparation_time_unit", 65),
+        ("title", 65),
+        ("description", 165),
+        ("servings_unit", 65),
+        ("preparation_time_unit", 65),
     ])
     def test_recipe_fields_max_length(self, field: str, max_length: int) -> None:
         setattr(self.recipe, field, "A" * (max_length + 1))

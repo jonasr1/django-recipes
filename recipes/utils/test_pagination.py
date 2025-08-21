@@ -7,10 +7,10 @@ class PaginationLogicTest(TestCase):
     """Tests for the pagination logic without database interaction."""
     def test_pagination_static_for_early_pages(self) -> None:
         test_cases = [
-            (1, [1, 2, 3, 4]), # Static range for page 1
-            (2, [1, 2, 3, 4]), # Still static
-            (3, [2, 3, 4, 5]), # Dynamic starts here
-            (4, [3, 4, 5 ,6]), # Confirm dynamic continues
+            (1, [1, 2, 3, 4]),  # Static range for page 1
+            (2, [1, 2, 3, 4]),  # Still static
+            (3, [2, 3, 4, 5]),  # Dynamic starts here
+            (4, [3, 4, 5, 6]),  # Confirm dynamic continues
         ]
         for current_page, expected in test_cases:
             with self.subTest(current_page=current_page):
