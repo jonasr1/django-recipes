@@ -101,3 +101,7 @@ class AuthorRegisterFormIntegrationTest(DjangoTestCase):
             PASSWORD_COMPLEXITY_ERROR, response.context["form"].errors.get("password")
         )
         self.assertIn(PASSWORD_COMPLEXITY_ERROR, response.content.decode("utf-8"))
+
+    def test_send_get_request_to_registration_create_view_returns_404(self) -> None:
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 404)

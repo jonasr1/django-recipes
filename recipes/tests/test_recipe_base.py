@@ -26,6 +26,10 @@ class RecipeTestBase(TestCase):
             password=password, email=email
         )
 
+    def make_many_recipes(self, amount: int = 8) -> None:
+        for i in range(amount):
+            self.make_recipe(slug=f"r{i}", author={"username": f"u{i}"})
+
     def make_recipe(
         self,
         category: Category | dict[str, str] | None = None,
@@ -50,13 +54,13 @@ class RecipeTestBase(TestCase):
             author if isinstance(author, User) else self.make_author(**(author or {}))
         )
         return Recipe.objects.create(
-                description=description, author=author_instance,
-                preparation_time=preparation_time,
-                preparation_time_unit=preparation_time_unit,
-                servings=servings, servings_unit=servings_unit, title=title,
-                preparation_steps=preparation_steps, is_published=is_published,
-                preparation_steps_is_html=preparation_steps_is_html, slug=slug,
-                category=cat_instance
+            description=description, author=author_instance,
+            preparation_time=preparation_time,
+            preparation_time_unit=preparation_time_unit,
+            servings=servings, servings_unit=servings_unit, title=title,
+            preparation_steps=preparation_steps, is_published=is_published,
+            preparation_steps_is_html=preparation_steps_is_html, slug=slug,
+            category=cat_instance
         )
 
     def create_recipes(self, total_items: int, recipe_kwargs: dict[str, Any]) -> None:
