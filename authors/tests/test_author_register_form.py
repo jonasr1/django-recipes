@@ -1,6 +1,7 @@
 from http.client import HTTPResponse
 from unittest import TestCase
 
+from django.contrib.auth.models import User
 from django.test import TestCase as DjangoTestCase
 from django.urls import reverse
 from parameterized import parameterized
@@ -105,3 +106,24 @@ class AuthorRegisterFormIntegrationTest(DjangoTestCase):
     def test_send_get_request_to_registration_create_view_returns_404(self) -> None:
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 404)
+
+    def test_register_create_with_valid_form_creates_user_and_clears_session(
+        self,
+    ) -> None:
+        response = self.post_data()
+        self.assertTrue(User.objects.filter(username="user").exists())
+        # Check if the session was cleared
+        self.assertNotIn("register_form_data", self.client.session)
+        # Check if the success message exists
+        messages = list(response.context["messages"])
+        self.assertTrue(any("Your user is created" in str(m) for m in messages))
+
+    def test_register_create_with_invalid_form_keeps_session_data(self) -> None:
+        self.form_data["username"] = ""
+        self.form_data["password"] = ""
+        response = self.client.post(self.url, self.form_data)
+        self.assertFalse(User.objects.exists())
+        # Keeps data in the session
+        self.assertIn("register_form_data", self.client.session)
+        # Redirects correctly
+        self.assertRedirects(response, reverse("authors:register"))

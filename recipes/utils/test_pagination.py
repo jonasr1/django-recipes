@@ -49,3 +49,39 @@ class PaginationLogicTest(TestCase):
         return make_pagination_range(list(range(1, 21)), range_size, current_page)[
             "pagination"
         ]
+
+    def test_make_pagination_range_returns_empty_result_when_page_range_is_empty(
+        self,
+    ) -> None:
+        page_range: list[int] = []  # Given
+        # When
+        result = make_pagination_range(
+            page_range=page_range, range_size=5, current_page=1
+        )
+        # Then
+        expected = {
+            "pagination": [],
+            "page_range": [],
+            "range_size": 5,
+            "current_page": 1,
+            "total_pages": 0,
+            "start_index": 0,
+            "end_index": 0,
+            "first_page_out_of_range": False,
+            "last_page_out_of_range": False,
+        }
+        self.assertEqual(result, expected)
+
+    def test_make_pagination_range_raises_error_when_range_size_is_zero(self) -> None:
+        range_size = 0  # When
+        with self.assertRaises(ValueError) as context:
+            make_pagination_range([1, 2, 3], range_size, 1)
+        self.assertEqual(str(context.exception), "range_size must be greater than 0")
+
+    def test_make_pagination_range_raises_error_when_range_size_is_negative(
+        self,
+    ) -> None:
+        range_size = -10
+        with self.assertRaises(ValueError) as context:
+            make_pagination_range([1, 2, 3], range_size, 1)
+        self.assertEqual(str(context.exception), "range_size must be greater than 0")
