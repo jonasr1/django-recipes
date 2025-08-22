@@ -131,8 +131,16 @@ class AuthorRegisterFormIntegrationTest(DjangoTestCase):
     def test_email_field_must_be_unique_when_submitting_form(self) -> None:
         # First submission to create the user
         self.post_data()
-        # Second submission with same email shoul trigger validation error
+        # Second submission with same email should trigger validation error
         response = self.post_data()
         msg = "User e-mail is already in use"
         self.assertIn(msg, response.context["form"].errors.get("email"))
         self.assertIn(msg, response.content.decode("utf-8"))
+
+    def test_author_created_can_login(self) -> None:
+        password = "B#c342435"  # noqa: S105
+        self.form_data.update(
+            {"username": "testuser", "password": password, "password2": password})
+        self.client.post(self.url, data=self.form_data)
+        is_authenticated = self.client.login(username="testuser", password=password)
+        self.assertTrue(is_authenticated, "The newly created user should be able to log in")  # noqa: E501
