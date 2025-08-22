@@ -1,7 +1,7 @@
-from http.client import HTTPResponse
 from unittest import TestCase
 
 from django.contrib.auth.models import User
+from django.http import HttpResponse
 from django.test import TestCase as DjangoTestCase
 from django.urls import reverse
 from parameterized import parameterized
@@ -54,7 +54,7 @@ class AuthorRegisterFormIntegrationTest(DjangoTestCase):
     def url(self) -> str:
         return reverse("authors:create")
 
-    def post_data(self) -> HTTPResponse:
+    def post_data(self) -> HttpResponse:
         return self.client.post(self.url, data=self.form_data, follow=True)
 
     @parameterized.expand([
@@ -127,3 +127,12 @@ class AuthorRegisterFormIntegrationTest(DjangoTestCase):
         self.assertIn("register_form_data", self.client.session)
         # Redirects correctly
         self.assertRedirects(response, reverse("authors:register"))
+
+    def test_email_field_must_be_unique_when_submitting_form(self) -> None:
+        # First submission to create the user
+        self.post_data()
+        # Second submission with same email shoul trigger validation error
+        response = self.post_data()
+        msg = "User e-mail is already in use"
+        self.assertIn(msg, response.context["form"].errors.get("email"))
+        self.assertIn(msg, response.content.decode("utf-8"))

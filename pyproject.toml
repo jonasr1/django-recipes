@@ -12,6 +12,7 @@ pillow = "^11.2.1"
 pytest = "^8.3.5"
 pytest-django = "^4.11.1"
 python-decouple = "^3.8"
+django-stubs = "^5.2.2"
 
 [tool.poetry.group.dev.dependencies]
 pytest-watch = "^4.2.0"
