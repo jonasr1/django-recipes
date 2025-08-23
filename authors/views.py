@@ -4,7 +4,7 @@ from django.http.response import Http404, HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
-from authors.forms import RegisterForm
+from authors.forms import LoginForm, RegisterForm
 
 
 def register_view(request: HttpRequest) -> HttpResponse:
@@ -13,7 +13,7 @@ def register_view(request: HttpRequest) -> HttpResponse:
     return render(
         request,
         "authors/pages/register_view.html",
-        {"form": form, "form_action": reverse("authors:create")},
+        {"form": form, "form_action": reverse("authors:register_create")},
     )
 
 
@@ -30,3 +30,12 @@ def register_create(request: HttpRequest) -> HttpResponse:
         messages.success(request, "Your user is created, please log in.")
         del request.session["register_form_data"]
     return redirect("authors:register")
+
+
+def login_view(request: HttpRequest) -> HttpResponse:
+    form = LoginForm()
+    return render(request, "authors/pages/login.html", {"form": form})
+
+
+def login_create(request: HttpRequest) -> HttpResponse:
+    return render(request, "authors/pages/login.html")

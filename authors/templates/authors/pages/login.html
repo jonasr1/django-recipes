@@ -1,0 +1,21 @@
+{% extends "global/base.html" %}
+
+{% block title %} Login {% endblock title %}
+
+{% block content %}
+  <div class="main-content center container">
+    <h2>Login</h2>
+  </div>
+
+  {% if form.errors %}
+  <div class="form-content">
+    <div class="message message-error">
+      There are errors in the form, please fix them and send again.
+    </div>
+  </div>
+  {% endif %}
+
+  {% include "global/partials/messages.html" %}
+  {% include "global/partials/form.html" %}
+
+{% endblock content %}

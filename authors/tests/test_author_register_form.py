@@ -52,7 +52,7 @@ class AuthorRegisterFormIntegrationTest(DjangoTestCase):
 
     @property
     def url(self) -> str:
-        return reverse("authors:create")
+        return reverse("authors:register_create")
 
     def post_data(self) -> HttpResponse:
         return self.client.post(self.url, data=self.form_data, follow=True)
