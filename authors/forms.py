@@ -1,5 +1,3 @@
-import re
-
 from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -7,28 +5,9 @@ from django.core.exceptions import ValidationError
 from authors.constants import (
     COMMON_LENGTH_ERRORS,
     EMAIL_HELP_TEXT,
-    PASSWORD_COMPLEXITY_ERROR,
     PLACEHOLDERS,
 )
-
-
-def add_attr(field: forms.Field, attr_name: str, new_attr_val: str) -> None:
-    existing_attrs = field.widget.attrs.get(attr_name, "")
-    field.widget.attrs[attr_name] = f"{existing_attrs} {new_attr_val}".strip()
-
-
-def add_placeholder(field: forms.Field, placeholder_val: str) -> None:
-    add_attr(field, "placeholder", placeholder_val)
-
-
-def strong_password(password: str) -> None:
-    regex = re.compile(r"(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}$")
-    if not regex.match(password):
-        password_regex_error = PASSWORD_COMPLEXITY_ERROR
-        raise ValidationError(
-            (password_regex_error),
-            code="invalid",
-        )
+from utils.django_forms import add_placeholder, strong_password
 
 
 class RegisterForm(forms.ModelForm):

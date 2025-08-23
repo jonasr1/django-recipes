@@ -7,7 +7,7 @@ from django.http.response import Http404
 from django.shortcuts import get_object_or_404, render
 
 from recipes.models import Recipe
-from recipes.utils.pagination import make_pagination
+from utils.pagination import make_pagination
 
 PER_PAGE: Final[int] = config("PER_PAGE", default=6)
 
