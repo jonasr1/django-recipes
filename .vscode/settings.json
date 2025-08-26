@@ -4,5 +4,11 @@
   "python.testing.pytestArgs": [],
   "conventionalCommits.scopes": [
     "recipes"
-  ], // -x to bail
+  ],
+  "cSpell.words": [
+    "CHROMEDRIVER",
+    "endfor",
+    "errorlist",
+    "ssword"
+  ],
 }
