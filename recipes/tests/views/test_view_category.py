@@ -15,7 +15,7 @@ class RecipeCategoryViewTest(RecipeTestBase):
 
     def test_recipe_category_view_returns_404_if_no_recipes_found(self) -> None:
         response = self.client.get(
-            reverse("recipes:category", kwargs={"category_id": 1000})
+            reverse("recipes:category", kwargs={"category_id": 1000}),
         )
         self.assertEqual(response.status_code, 404)
 
@@ -24,7 +24,7 @@ class RecipeCategoryViewTest(RecipeTestBase):
         #  Need a recipe for this test
         recipe = self.make_recipe(is_published=False)
         response = self.client.get(reverse(
-            "recipes:category", kwargs={"category_id": recipe.category.id})  # type: ignore  # noqa: E501, RUF100
+            "recipes:category", kwargs={"category_id": recipe.category.id}),  # type: ignore  # noqa: E501, RUF100
         )
         self.assertEqual(response.status_code, 404)
 

@@ -59,5 +59,5 @@ class RecipeModelTest(RecipeTestBase):
         self.assertEqual(
             str(self.recipe), needed,
             msg=f"Recipe string representation must be '{needed}' but"
-                f"'{self.recipe!s}' was received"
+                f"'{self.recipe!s}' was received",
         )

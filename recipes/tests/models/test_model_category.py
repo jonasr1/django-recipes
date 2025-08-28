@@ -8,7 +8,7 @@ class RecipeCategoryModelTest(RecipeTestBase):
         self.category = self.make_category(name="Category Testing")
         return super().setUp()
 
-    def test_recipe_category_model_string_represntation(self) -> None:
+    def test_recipe_category_model_string_representation(self) -> None:
         self.assertEqual(str(self.category), self.category.name)
 
     def test_recipe_category_model_name_max_length_is_65_chars(self) -> None:

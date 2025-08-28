@@ -91,7 +91,7 @@ class AuthorRegisterFormIntegrationTest(DjangoTestCase):
         self.form_data["password"] = "Abc_123!"  # noqa: S105
         response = self.post_data()
         self.assertNotIn(
-            PASSWORD_COMPLEXITY_ERROR, response.context["form"].errors.get("password")
+            PASSWORD_COMPLEXITY_ERROR, response.context["form"].errors.get("password"),
         )
         self.assertNotIn(PASSWORD_COMPLEXITY_ERROR, response.content.decode("utf-8"))
 
@@ -99,7 +99,7 @@ class AuthorRegisterFormIntegrationTest(DjangoTestCase):
         self.form_data["password"] = "abc123"  # noqa: S105
         response = self.post_data()
         self.assertIn(
-            PASSWORD_COMPLEXITY_ERROR, response.context["form"].errors.get("password")
+            PASSWORD_COMPLEXITY_ERROR, response.context["form"].errors.get("password"),
         )
         self.assertIn(PASSWORD_COMPLEXITY_ERROR, response.content.decode("utf-8"))
 
