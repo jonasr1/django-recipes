@@ -8,8 +8,7 @@ from django.urls.base import reverse
 from recipes.models import Category, Recipe, User
 
 
-class RecipeTestBase(TestCase):
-
+class RecipeMixin:
     def make_category(self, name: str = "category") -> Category:
         return Category.objects.create(name=name)
 
@@ -23,7 +22,7 @@ class RecipeTestBase(TestCase):
     ) -> User:
         return User.objects.create_user(
             first_name=first_name, last_name=last_name, username=username,
-            password=password, email=email
+            password=password, email=email,
         )
 
     def make_many_recipes(self, amount: int = 8) -> None:
@@ -60,7 +59,7 @@ class RecipeTestBase(TestCase):
             servings=servings, servings_unit=servings_unit, title=title,
             preparation_steps=preparation_steps, is_published=is_published,
             preparation_steps_is_html=preparation_steps_is_html, slug=slug,
-            category=cat_instance
+            category=cat_instance,
         )
 
     def create_recipes(self, total_items: int, recipe_kwargs: dict[str, Any]) -> None:
@@ -70,7 +69,7 @@ class RecipeTestBase(TestCase):
             self.make_recipe(**kwargs)
 
     def build_url(
-        self, url_name: str, url_kwargs: dict[str, Any], query_params: dict[str, Any]
+        self, url_name: str, url_kwargs: dict[str, Any], query_params: dict[str, Any],
     ) -> str:
         url = reverse(url_name, kwargs=url_kwargs)
         if query_params:
@@ -79,7 +78,7 @@ class RecipeTestBase(TestCase):
         return url
 
     def check_pagination(
-        self, response: HttpResponse, total_items: int, per_page: int
+        self, response: HttpResponse, total_items: int, per_page: int,
     ) -> None:
         self.assertIn("recipes", response.context)
         recipes = response.context["recipes"]
@@ -118,3 +117,8 @@ class RecipeTestBase(TestCase):
             url = self.build_url(url_name, url_kwargs, query_params)
             response = self.client.get(url)
             self.check_pagination(response, total_items, per_page)
+
+
+class RecipeTestBase(TestCase, RecipeMixin):
+    def setUp(self) -> None:
+        return super().setUp()

@@ -1,9 +1,12 @@
+import pytest
 from selenium.webdriver.common.by import By
 
+from recipes.tests.test_recipe_base import RecipeMixin
 from tests.functional_tests.recipes.base import RecipeBasePageFunctionalTest
 
 
-class RecipeHomePageFunctionalTest(RecipeBasePageFunctionalTest):
+@pytest.mark.functional_test
+class RecipeHomePageFunctionalTest(RecipeBasePageFunctionalTest, RecipeMixin):
     def test_recipe_home_page_without_recipes_not_found_messages(self) -> None:
         self.browser.get(self.live_server_url)
         body = self.browser.find_element(By.TAG_NAME, "body")

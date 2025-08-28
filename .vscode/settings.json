@@ -6,9 +6,24 @@
     "recipes"
   ],
   "cSpell.words": [
+    "addopts",
+    "arquivos",
     "CHROMEDRIVER",
+    "doctest",
     "endfor",
     "errorlist",
-    "ssword"
+    "gunicorn",
+    "htmlcov",
+    "localcode",
+    "Minutos",
+    "Opcional",
+    "padrões",
+    "Porções",
+    "pycache",
+    "pyenv",
+    "pytest",
+    "ssword",
+    "teste",
+    "venv"
   ],
 }
