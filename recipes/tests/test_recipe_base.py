@@ -25,9 +25,14 @@ class RecipeMixin:
             password=password, email=email,
         )
 
-    def make_many_recipes(self, amount: int = 8) -> None:
-        for i in range(amount):
-            self.make_recipe(slug=f"r{i}", author={"username": f"u{i}"})
+    def make_recipe_in_batch(self, count: int = 8) -> list[Recipe]:
+        return [
+            self.make_recipe(
+                title=f"Recipe title {i}",
+                slug=f"r{i}",
+                author={"username": f"u{i}"},
+            ) for i in range(count)
+        ]
 
     def make_recipe(
         self,

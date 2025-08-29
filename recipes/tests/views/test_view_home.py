@@ -27,7 +27,7 @@ class RecipeHomeViewTest(RecipeTestBase):
     def test_recipe_home_template_shows_no_recipes_found_if_no_recipes(self) -> None:
         response = self.client.get(self.url)
         self.assertIn(
-            "No recipes found here 🥲", response.content.decode("utf-8")
+            "No recipes found here 🥲", response.content.decode("utf-8"),
         )
 
     def test_recipe_home_template_loads_recipes(self) -> None:
@@ -45,20 +45,20 @@ class RecipeHomeViewTest(RecipeTestBase):
         self.make_recipe(is_published=False)
         response = self.client.get(self.url)
         self.assertIn(
-            "No recipes found here 🥲", response.content.decode("utf-8")
+            "No recipes found here 🥲", response.content.decode("utf-8"),
         )
 
     def test_recipe_home_is_paginated(self) -> None:
         self.assertPaginationWorks("recipes:home", total_items=8, per_page=3)
 
     def test_invalid_page_query_falls_back_to_page_one(self) -> None:
-        self.make_many_recipes()  # creates 8 recipes by default
+        self.make_recipe_in_batch()  # creates 8 recipes by default
         with patch("recipes.views.PER_PAGE", new=3):
             response = self.client.get(self.url + "?page=12A")
             self.assertEqual(response.context["recipes"].number, 1)
 
     def test_valid_page_queries_work_normally(self) -> None:
-        self.make_many_recipes()  # creates 8 recipes by default
+        self.make_recipe_in_batch()  # creates 8 recipes by default
         with patch("recipes.views.PER_PAGE", new=3):
             response = self.client.get(self.url + "?page=2")
             self.assertEqual(response.context["recipes"].number, 2)
