@@ -22,8 +22,10 @@
     "pycache",
     "pyenv",
     "pytest",
+    "redef",
     "ssword",
     "teste",
-    "venv"
+    "venv",
+    "webelement"
   ],
 }
