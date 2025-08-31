@@ -3,6 +3,8 @@ from unittest.mock import patch
 import pytest
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions as ec
+from selenium.webdriver.support.wait import WebDriverWait
 
 from recipes.tests.test_recipe_base import RecipeMixin
 from tests.functional_tests.recipes.base import RecipeBasePageFunctionalTest
@@ -29,11 +31,12 @@ class RecipeHomePageFunctionalTest(RecipeBasePageFunctionalTest, RecipeMixin):
         # to find the recipe with the desired title
         search_input.send_keys(title_needed)
         search_input.send_keys(Keys.ENTER)
-        # The user sees what they were looking for on the page
-        self.assertIn(
-            title_needed,
-            self.browser.find_element(By.CLASS_NAME, "main-content-list").text,
+        # Wait until the main list has the expected text
+        main_content = WebDriverWait(self.browser, 10).until(
+            ec.visibility_of_element_located((By.CLASS_NAME, "main-content-list")),
         )
+        # The user sees what they were looking for on the page
+        self.assertIn(title_needed, main_content.text)
 
     @patch("recipes.views.PER_PAGE", new=2)
     def test_recipe_home_page_pagination(self) -> None:

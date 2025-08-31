@@ -1,6 +1,7 @@
 from collections.abc import Callable
 from uuid import uuid1
 
+import pytest
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webelement import WebElement
@@ -10,6 +11,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from tests.functional_tests.authors.base import AuthorsBaseTest
 
 
+@pytest.mark.functional_test
 class AuthorsRegisterTest(AuthorsBaseTest):
     def fill_form_dummy_data(self, form: WebElement) -> None:
         fields = form.find_elements(By.TAG_NAME, "input")
@@ -88,7 +90,6 @@ class AuthorsRegisterTest(AuthorsBaseTest):
         form = self.browser.find_element(By.XPATH, "/html/body/div/main/div[2]/form")
         unique_username = f"user_{uuid1().hex[:8]}"
         unique_email = f"{unique_username}@valid.com"
-
         fields = {
             "Ex.: John": "First Name",
             "Ex.: Doe": "Last Name",
@@ -100,7 +101,9 @@ class AuthorsRegisterTest(AuthorsBaseTest):
         for placeholder, value in fields.items():
             self.get_by_placeholder(form, placeholder).send_keys(value)
         form.submit()
-        self.assertIn(
-            "Your user is created, please log in.",
-            self.browser.find_element(By.TAG_NAME, "body").text,
-        )
+        # wait until the message appears in the body
+        message_present = WebDriverWait(self.browser, 10).until(
+            ec.text_to_be_present_in_element(
+                (By.TAG_NAME, "body"), "Your user is created, please log in.",
+            ))
+        self.assertTrue(message_present)
