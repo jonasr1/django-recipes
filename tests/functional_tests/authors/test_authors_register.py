@@ -19,14 +19,6 @@ class AuthorsRegisterTest(AuthorsBaseTest):
             if field.is_displayed():
                 field.send_keys(" " * 20)
 
-    def get_by_placeholder(self, form: WebElement, placeholder: str) -> WebElement:
-        return form.find_element(By.XPATH, f'//input[@placeholder="{placeholder}"]')
-
-    def get_error(self, field_name: str) -> WebElement:
-        return WebDriverWait(self.browser, 5).until(
-            ec.presence_of_element_located((By.ID, f"id_{field_name}_error")),
-        )
-
     def form_field_test_with_callback(
         self, field_check: Callable[[WebElement], None],
     ) -> WebElement:
