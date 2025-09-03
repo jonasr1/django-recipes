@@ -34,3 +34,10 @@ class AuthorsBaseTest(StaticLiveServerTestCase):
         """Open a page using the Django URL name."""
         full_url = self.live_server_url + reverse(url_name)
         self.browser.get(full_url)
+
+    def assert_text_in_body(self, text: str, timeout: int = 10) -> None:
+        """Assert that given text is present in body within timeout."""
+        message_present = WebDriverWait(self.browser, timeout).until(
+            ec.text_to_be_present_in_element((By.TAG_NAME, "body"), text),
+        )
+        self.assertTrue(message_present)

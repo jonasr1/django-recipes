@@ -115,5 +115,6 @@ omit = [
     "venv/*",
     "**/*test*.py",
     "manage.py",
-    "**/migrations/*.py"
+    "**/migrations/*.py",
+    "utils/browser.py",
 ]

@@ -22,7 +22,5 @@ class AuthorsLoginTest(AuthorsBaseTest):
         # User submits the form
         form.submit()
         # User sees successful login message and their name
-        self.assertIn(
-            f"You are logged in with {user.username}.",
-            self.browser.find_element(By.TAG_NAME, "body").text,
-        )
+        self.assert_text_in_body(f"You are logged in with {user.username}.")
+
