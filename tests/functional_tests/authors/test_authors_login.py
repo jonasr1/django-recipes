@@ -22,7 +22,32 @@ class AuthorsLoginTest(AuthorsBaseTest):
         # User submits the form
         form.submit()
         # User sees successful login message and their name
-        self.assertIn(
-            f"You are logged in with {user.username}.",
-            self.browser.find_element(By.TAG_NAME, "body").text,
-        )
+        self.assert_text_in_body(f"You are logged in with {user.username}.")
+
+    def test_login_create_rejects_non_post_requests(self) -> None:
+        self.open_page("authors:login_create")
+        self.assert_text_in_body("Not Found")
+
+    def test_login_shows_error_message_is_invalid(self) -> None:
+        # User opens login page
+        self.open_page("authors:login")
+        # User sees login form
+        form = self.browser.find_element(By.CLASS_NAME, "main-form")
+        # And try to send empty values
+        self.get_by_placeholder(form, "Type your username").send_keys("")
+        self.get_by_placeholder(form, "Type your password").send_keys("")
+        form.submit()
+        # You see an error message on the screen
+        self.assert_text_in_body("Invalid username or password")
+
+    def test_login_shows_error_message_with_invalid_credentials(self) -> None:
+        # User opens login page
+        self.open_page("authors:login")
+        # User sees login form
+        form = self.browser.find_element(By.CLASS_NAME, "main-form")
+        # And tries to send values ​​with data that doesn't match
+        self.get_by_placeholder(form, "Type your username").send_keys("invalid_user")
+        self.get_by_placeholder(form, "Type your password").send_keys("invalid_password")  # noqa: E501
+        form.submit()
+        # You see an error message on the screen
+        self.assert_text_in_body("Invalid credentials")

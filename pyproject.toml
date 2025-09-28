@@ -27,9 +27,6 @@ selenium = "^4.35.0"
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.pyrefly]
-python_interpreter = "/home/jonas/Projects/django-curso-drf/project1/.venv/bin/python"
-
 [tool.pyrefly.errors]
 missing-attribute = false
 bad-assignment = false
@@ -37,9 +34,6 @@ bad-return = false
 unknown-name = false
 bad-argument-type = false
 
-# ============================
-# Lint e formatação (Ruff)
-# ============================
 [tool.ruff]
 line-length = 88
 target-version = "py312"
@@ -97,9 +91,6 @@ quote-style = "double"
 indent-style = "space"
 line-ending = "lf"
 
-# ============================
-# Tipagem (Pyright)
-# ============================
 [tool.pyright]
 typeCheckingMode = "strict"
 pythonVersion = "3.12"
@@ -115,5 +106,6 @@ omit = [
     "venv/*",
     "**/*test*.py",
     "manage.py",
-    "**/migrations/*.py"
+    "**/migrations/*.py",
+    "utils/browser.py",
 ]
