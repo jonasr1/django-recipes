@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING, cast
+
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -7,6 +9,10 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 
 from authors.forms import LoginForm, RegisterForm
+from recipes.models import Recipe
+
+if TYPE_CHECKING:
+    from django.contrib.auth.models import User
 
 
 def register_view(request: HttpRequest) -> HttpResponse:
@@ -71,4 +77,6 @@ def logout_view(request: HttpRequest) -> HttpResponseRedirect:
 
 @login_required(login_url="authors:login", redirect_field_name="next")
 def dashboard(request: HttpRequest) -> HttpResponse:
-    return render(request, "authors/pages/dashboard.html")
+    user: User = cast("User", request.user)
+    recipes = Recipe.objects.filter(is_published=True, author=user)
+    return render(request, "authors/pages/dashboard.html", context={"recipes": recipes})

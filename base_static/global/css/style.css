@@ -425,6 +425,33 @@ h6 {
     margin: 1rem 0;
 }
 
+.authors-dashboard-container {
+    max-width: 64rem;
+    text-align: left;
+    padding: var(--spacing-gutter-medium);
+    margin: 0 auto;
+}
+
+.authors-dashboard-container ul {
+    list-style-type: none;
+    margin: 1rem 0;
+}
+
+.authors-dashboard-container a {
+    color: var(--color-primary);
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: all 300ms ease-in-out;
+}
+
+.authors-dashboard-container li a {
+    text-decoration: none;
+}
+
+.authors-dashboard-container a:hover {
+    color: var(--color-primary-dark);
+}
+
 /* Generics */
 
 .center {
