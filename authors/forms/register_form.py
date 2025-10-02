@@ -36,7 +36,7 @@ class RegisterForm(forms.ModelForm):
     )
     email = forms.EmailField(
         error_messages={"required": "E-mail is required"},
-        help_text=EMAIL_HELP_TEXT
+        help_text=EMAIL_HELP_TEXT,
     )
     password = forms.CharField(
         error_messages={"required": "Password must not be empty"},
@@ -67,7 +67,7 @@ class RegisterForm(forms.ModelForm):
         password2 = cleaned_data.get("password2") if cleaned_data else None
         if password != password2:
             password_confirmation_error = ValidationError(
-                "Password and password2 must be equal", code="invalid"
+                "Password and password2 must be equal", code="invalid",
             )
             raise ValidationError({
                 "password": password_confirmation_error,

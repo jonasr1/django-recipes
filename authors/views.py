@@ -8,7 +8,7 @@ from django.http.response import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
-from authors.forms import LoginForm, RegisterForm
+from authors.forms import AuthorRecipeForm, LoginForm, RegisterForm
 from recipes.models import Recipe
 
 if TYPE_CHECKING:
@@ -78,5 +78,19 @@ def logout_view(request: HttpRequest) -> HttpResponseRedirect:
 @login_required(login_url="authors:login", redirect_field_name="next")
 def dashboard(request: HttpRequest) -> HttpResponse:
     user: User = cast("User", request.user)
-    recipes = Recipe.objects.filter(is_published=True, author=user)
+    recipes = Recipe.objects.filter(is_published=False, author=user)
     return render(request, "authors/pages/dashboard.html", context={"recipes": recipes})
+
+
+@login_required(login_url="authors:login", redirect_field_name="next")
+def dashboard_recipe_edit(request: HttpRequest, recipe_id: int) -> HttpResponse:
+    user: User = cast("User", request.user)
+    recipe = Recipe.objects.filter(
+        is_published=False, author=user, pk=recipe_id,
+    ).first()
+    if not recipe:
+        raise Http404
+    form = AuthorRecipeForm(data=request.POST or None, instance=recipe)
+    return render(
+        request, "authors/pages/dashboard_recipe.html", context={"form": form},
+    )
