@@ -30,8 +30,9 @@ def register_create(request: HttpRequest) -> HttpResponseRedirect:
     request.session["register_form_data"] = post_data
     form = RegisterForm(post_data)
     if form.is_valid():
-        user = form.save(commit=False)
-        user.set_password(user.password)
+        user: User = form.save(commit=False)
+        raw_password: str = form.cleaned_data["password"]
+        user.set_password(raw_password)
         user.save()
         messages.success(request, "Your user is created, please log in.")
         del request.session["register_form_data"]

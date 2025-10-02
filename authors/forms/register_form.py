@@ -1,3 +1,4 @@
+
 from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -10,7 +11,7 @@ from authors.constants import (
 from utils.django_forms import add_placeholder, strong_password
 
 
-class RegisterForm(forms.ModelForm):
+class RegisterForm(forms.ModelForm[User]):
     def __init__(self, *args, **kwargs) -> None:  # noqa: ANN002, ANN003
         super().__init__(*args, **kwargs)
         for field, placeholder in PLACEHOLDERS.items():

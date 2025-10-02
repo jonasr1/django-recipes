@@ -3,6 +3,7 @@ from django.contrib import admin
 from recipes.models import Category, Recipe
 
 
+@admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     ...
 
@@ -17,6 +18,3 @@ class RecipeAdmin(admin.ModelAdmin):
     list_editable = ("is_published",)
     ordering = ("-id",)
     prepopulated_fields = {"slug": ("title",)}  # noqa: RUF012
-
-
-admin.site.register(Category)
