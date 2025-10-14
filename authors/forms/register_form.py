@@ -11,7 +11,7 @@ from authors.constants import (
 from utils.django_forms import add_placeholder, strong_password
 
 
-class RegisterForm(forms.ModelForm[User]):
+class RegisterForm(forms.ModelForm):
     def __init__(self, *args, **kwargs) -> None:  # noqa: ANN002, ANN003
         super().__init__(*args, **kwargs)
         for field, placeholder in PLACEHOLDERS.items():
