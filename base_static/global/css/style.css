@@ -72,6 +72,11 @@ img {
     max-width: 100%;
 }
 
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
 .container {
     max-width: 144rem;
     margin: 0 auto;

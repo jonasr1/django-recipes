@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "recipes",
-    "authors"
+    "authors",
 ]
 
 MIDDLEWARE = [
@@ -59,8 +59,8 @@ TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
-            BASE_DIR / "base_templates"
-            ],
+            BASE_DIR / "base_templates",
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -82,7 +82,7 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
-    }
+    },
 }
 
 
@@ -141,5 +141,5 @@ MESSAGE_TAGS = {
     messages.INFO: "message-info",
     messages.SUCCESS: "message-success",
     messages.WARNING: "message-warning",
-    messages.ERROR: "message-error"
+    messages.ERROR: "message-error",
 }
