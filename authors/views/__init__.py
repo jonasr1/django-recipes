@@ -1,1 +1,3 @@
-from .all import *  # noqa
+# flake8: noqa 
+from .all import *
+from .dashboard_recipe import *
