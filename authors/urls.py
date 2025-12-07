@@ -13,17 +13,17 @@ urlpatterns = [
     path("dashboard/", views.dashboard, name="dashboard"),
     path(
         "dashboard/recipe/create/",
-        views.dashboard_create_recipe,
+        views.DashboardRecipe.as_view(),
         name="dashboard_create_recipe",
     ),
     path(
         "dashboard/recipe/delete/",
-        views.dashboard_delete_recipe,
+        views.DashboardRecipeDelete.as_view(),
         name="dashboard_delete_recipe",
     ),
     path(
         "dashboard/recipe/<int:recipe_id>/edit/",
-        views.dashboard_edit_recipe,
+        views.DashboardRecipe.as_view(),
         name="dashboard_edit_recipe",
     ),
 ]

@@ -1,3 +1,5 @@
+import itertools
+
 from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
@@ -48,9 +50,14 @@ class Recipe(models.Model):
 
     def save(self, *args, **kwargs) -> None: # noqa
         if not self.slug:
-            slug = f"{slugify}"
+            base_slug = slugify(self.title)
+            slug = base_slug
+            for i in itertools.count(1):
+                if not Recipe.objects.filter(slug=slug).exists():
+                    break
+                slug = f"{base_slug}-{i}"
             self.slug = slug
-        return super().save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def get_absolute_url(self) -> str:
         return reverse("recipes:recipe", kwargs={"pk": self.pk})

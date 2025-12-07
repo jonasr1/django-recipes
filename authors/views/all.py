@@ -8,7 +8,7 @@ from django.http.response import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
-from authors.forms import AuthorRecipeForm, LoginForm, RegisterForm
+from authors.forms import LoginForm, RegisterForm
 from recipes.models import Recipe
 
 if TYPE_CHECKING:
@@ -81,65 +81,3 @@ def dashboard(request: HttpRequest) -> HttpResponse:
     user: User = cast("User", request.user)
     recipes = Recipe.objects.filter(is_published=False, author=user)
     return render(request, "authors/pages/dashboard.html", context={"recipes": recipes})
-
-
-@login_required(login_url="authors:login", redirect_field_name="next")
-def dashboard_edit_recipe(request: HttpRequest, recipe_id: int) -> HttpResponse:
-    user: User = cast("User", request.user)
-    recipe = Recipe.objects.filter(
-        is_published=False, author=user, pk=recipe_id,
-    ).first()
-    if not recipe:
-        raise Http404
-    form = AuthorRecipeForm(
-        data=request.POST or None, instance=recipe, files=request.FILES or None,
-    )
-    if form.is_valid():
-        recipe: Recipe = form.save(commit=False)
-        recipe.author = cast("User", request.user)
-        recipe.preparation_steps_is_html = False
-        recipe.is_published = False
-        recipe.save()
-        messages.success(request, "Your recipe has been saved successfully!")
-        return redirect(reverse("authors:dashboard_edit_recipe", args=(recipe_id,)))
-    return render(
-        request, "authors/pages/dashboard_recipe.html", context={"form": form},
-    )
-
-
-@login_required(login_url="authors:login", redirect_field_name="next")
-def dashboard_create_recipe(request: HttpRequest) -> HttpResponse:
-    form = AuthorRecipeForm(
-        data=request.POST or None, files=request.FILES or None,
-    )
-    if form.is_valid():
-        recipe: Recipe = form.save(commit=False)
-        recipe.author = cast("User", request.user)
-        recipe.preparation_steps_is_html = False
-        recipe.is_published = False
-        recipe.save()
-        messages.success(request, "Your recipe has been saved successfully!")
-        return redirect(reverse("authors:dashboard"))
-    return render(
-        request, "authors/pages/dashboard_recipe.html", context={"form": form},
-    )
-
-
-@login_required(login_url="authors:login", redirect_field_name="next")
-def dashboard_delete_recipe(request: HttpRequest) -> HttpResponse:
-    post_data = request.POST
-    if not post_data:
-        raise Http404
-    recipe_id_str = post_data.get("id")
-    if recipe_id_str is None or not recipe_id_str.isdigit():
-        raise Http404
-    recipe_id = int(recipe_id_str)
-    user: User = cast("User", request.user)
-    recipe = Recipe.objects.filter(
-        is_published=False, author=user, pk=recipe_id,
-    ).first()
-    if not recipe:
-        raise Http404
-    recipe.delete()
-    messages.success(request, "Deleted successfully.")
-    return redirect(reverse("authors:dashboard"))
