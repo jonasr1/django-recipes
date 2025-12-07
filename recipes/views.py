@@ -1,12 +1,10 @@
-from functools import cached_property
-from typing import Any, Final
+from typing import Final
 
 from decouple import config
 from django.db.models import Q
-from django.db.models.query import QuerySet
+from django.http import HttpRequest, HttpResponse
 from django.http.response import Http404
-from django.utils.http import urlencode
-from django.views.generic import DetailView, ListView
+from django.shortcuts import get_object_or_404, render
 
 from recipes.models import Recipe
 from utils.pagination import make_pagination
@@ -14,93 +12,65 @@ from utils.pagination import make_pagination
 PER_PAGE: Final[int] = config("PER_PAGE", default=6)
 
 
-class RecipeListViewBase(ListView):
-    model = Recipe
-    context_object_name = "recipes"
-    ordering = ("-id")
-
-    def get_queryset(self, *args, **kwargs) -> QuerySet[Recipe]:
-        qs = super().get_queryset(*args, **kwargs)
-        return qs.filter(is_published=True)
-
-    def get_context_data(self, **kwargs) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs)
-        page_obj, pagination_range = make_pagination(
-            self.request, context.get("recipes"), PER_PAGE,
-        )
-        context.update({"recipes": page_obj, "pagination_range": pagination_range})
-        return context
+def home(request: HttpRequest) -> HttpResponse:
+    recipes = Recipe.objects.filter(is_published=True).order_by("-id")
+    page_obj, pagination_range = make_pagination(request, recipes, PER_PAGE)
+    return render(
+        request,
+        "recipes/pages/home.html",
+        context={"recipes": page_obj, "pagination_range": pagination_range},
+    )
 
 
-class RecipeListViewHome(RecipeListViewBase):
-    template_name = "recipes/pages/home.html"
+def category(request: HttpRequest, category_id: int) -> HttpResponse:
+    recipes = Recipe.objects.filter(
+        is_published=True, category__id=category_id
+    ).order_by("-id")
+    if not recipes.exists():
+        raise Http404
+    category_obj = recipes[0].category
+    title = f"{category_obj.name if category_obj else 'Unknown'}"
+    page_obj, pagination_range = make_pagination(request, recipes, PER_PAGE)
+    return render(
+        request,
+        "recipes/pages/category.html",
+        context={
+            "recipes": page_obj,
+            "title": f"{title} - Category ",
+            "pagination_range": pagination_range,
+        },
+    )
 
 
-class RecipeListViewCategory(RecipeListViewBase):
-    template_name = "recipes/pages/category.html"
-
-    def get_queryset(self, *args, **kwargs) -> QuerySet[Recipe]:
-        category_id = self.kwargs.get("category_id")
-        qs = (super().get_queryset(*args, **kwargs))
-        qs = qs.filter(is_published=True, category__id=category_id)
-        if not qs.exists():
-            msg = "No recipes found in this category"
-            raise Http404(msg)
-        return qs
-
-    def get_context_data(self, **kwargs) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs)
-        recipes = context["recipes"]
-        if not recipes:
-            context["title"] = "Unknown Category"
-            return context
-        category_obj = recipes[0].category
-        category_name = category_obj.name if category_obj else "Desconhecido"
-        context["title"] = f"{category_name} - Category"
-        return context
+def recipe(request: HttpRequest, pk: int) -> HttpResponse:
+    recipe_obj = get_object_or_404(Recipe, pk=pk, is_published=True)
+    return render(
+        request,
+        "recipes/pages/recipe-view.html",
+        context={"recipe": recipe_obj, "is_detail_page": True},
+    )
 
 
-class RecipeListViewSearch(RecipeListViewBase):
-    template_name = "recipes/pages/search.html"
-
-    @cached_property
-    def search_term(self) -> str:
-        return (self.request.GET.get("q") or "").strip()
-
-    def get_queryset(self, *args, **kwargs) -> QuerySet[Recipe]:
-        search_term = self.search_term
-        if not search_term:
-            raise Http404
-        qs = super().get_queryset()
-        return qs.filter(
+def search(request: HttpRequest) -> HttpResponse:
+    search_term = request.GET.get("q", "").strip()
+    if not search_term:
+        raise Http404
+    recipes = Recipe.objects.filter(
+        Q(
             Q(title__icontains=search_term) | Q(description__icontains=search_term),
             is_published=True,
         )
+    ).order_by("-id")
+    page_obj, pagination_range = make_pagination(request, recipes, PER_PAGE)
 
-    def get_context_data(self, **kwargs) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs)
-        search_term = self.search_term
-        additional_query = urlencode({"q": search_term})
-        context.update(
-            {
-                "page_title": f"Search for '{search_term}'",
-                "search_term": search_term,
-                "additional_url_query": f"&{additional_query}",
-            },
-        )
-        return context
-
-
-class RecipeDetail(DetailView):
-    model = Recipe
-    context_object_name = "recipe"
-    template_name = "recipes/pages/recipe-view.html"
-
-    def get_context_data(self, **kwargs) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs)
-        context["is_detail_page"] = True
-        return context
-
-    def get_queryset(self) -> QuerySet[Recipe]:
-        qs = super().get_queryset()
-        return qs.filter(is_published=True)
+    return render(
+        request,
+        "recipes/pages/search.html",
+        context={
+            "page_title": f"Search for '{search_term}'",
+            "search_term": search_term,
+            "recipes": page_obj,
+            "pagination_range": pagination_range,
+            "additional_url_query": f"&q={search_term}"
+        },
+    )

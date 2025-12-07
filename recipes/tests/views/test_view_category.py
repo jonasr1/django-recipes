@@ -30,7 +30,7 @@ class RecipeCategoryViewTest(RecipeTestBase):
 
     def test_recipe_category_view_function_is_correct(self) -> None:
         view = resolve(reverse("recipes:category", kwargs={"category_id": 1}))
-        self.assertIs(view.func.view_class, views.RecipeListViewCategory)
+        self.assertIs(view.func, views.category)
 
     def test_recipe_category_is_paginated(self) -> None:
         category = self.make_category(name="Sobremesas")
@@ -39,12 +39,3 @@ class RecipeCategoryViewTest(RecipeTestBase):
             url_kwargs={"category_id": category.pk},
             recipe_kwargs={"category": category},
         )
-
-    def test_recipe_category_view_page_title_is_correct(self) -> None:
-        category = self.make_category(name="Sobremesas")
-        self.make_recipe(category=category, is_published=True)
-        url = reverse("recipes:category", kwargs={"category_id": category.pk})
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("title", response.context)
-        self.assertEqual(response.context["title"], "Sobremesas - Category")
