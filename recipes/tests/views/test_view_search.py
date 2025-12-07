@@ -8,7 +8,7 @@ class RecipeSearchViewTest(RecipeTestBase):
     def test_recipe_search_uses_correct_view_function(self) -> None:
         url = reverse("recipes:search")
         resolved = resolve(url)
-        self.assertIs(resolved.func, views.search)  # type: ignore
+        self.assertIs(resolved.func.view_class, views.RecipeListViewSearch)
 
     def test_recipe_search_loads_correct_template(self) -> None:
         url = reverse("recipes:search")
@@ -53,3 +53,14 @@ class RecipeSearchViewTest(RecipeTestBase):
             query_params={"q": term},
             recipe_kwargs={"title": f"{term} incrível"},
         )
+
+    def test_search_view_page_title_is_correct(self) -> None:
+        url = reverse("recipes:search") + "?q=bolo"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("page_title", response.context)
+        self.assertEqual(
+            response.context["page_title"],
+            "Search for 'bolo'",
+        )
+        self.assertContains(response, "Search for &#x27;bolo&#x27; | Recipes")
