@@ -15,6 +15,7 @@ pytest-django = "^4.11.1"
 python-decouple = "^3.8"
 django-stubs = "^5.2.2"
 gunicorn = "^23.0.0"
+whitenoise = "^6.11.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest-watch = "^4.2.0"
