@@ -2,6 +2,7 @@
 name = "project1"
 version = "0.1.0"
 description = ""
+package-mode = false
 authors = ["Your Name <you@example.com>"]
 
 [tool.poetry.dependencies]
@@ -13,6 +14,7 @@ pytest = "^8.3.5"
 pytest-django = "^4.11.1"
 python-decouple = "^3.8"
 django-stubs = "^5.2.2"
+gunicorn = "^23.0.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest-watch = "^4.2.0"
@@ -40,7 +42,7 @@ target-version = "py312"
 fix = true
 show-fixes = true
 indent-width = 4
-exclude = ["__pycache__", "migrations", ".venv"]
+exclude = ["__pycache__", "migrations", ".venv", ".env-example"]
 
 [tool.ruff.lint]
 select = [

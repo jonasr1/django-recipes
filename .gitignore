@@ -46,11 +46,6 @@ coverage.xml
 *.cover
 .hypothesis/
 
-
-# pyenv
-.python-version
-
-
 # SageMath parsed files
 *.sage.py
 
