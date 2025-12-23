@@ -60,7 +60,7 @@ class DashboardRecipe(View):
             recipe.save()
             messages.success(request, "Your recipe has been saved successfully!")
             return redirect(reverse("authors:dashboard_edit_recipe", args=(recipe.id,)))
-        return self.render_recipe(recipe)
+        return self.render_recipe(form=form)
 
 
 class DashboardRecipeDelete(DashboardRecipe):
