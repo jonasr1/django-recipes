@@ -1,10 +1,12 @@
 from functools import cached_property
-from typing import Any, Final
+from typing import TYPE_CHECKING, Any, Final
 
 from decouple import config
 from django.db.models import Q
 from django.db.models.query import QuerySet
-from django.http.response import Http404
+from django.forms.models import model_to_dict
+from django.http.request import HttpRequest
+from django.http.response import Http404, HttpResponseBase, JsonResponse
 from django.utils.http import urlencode
 from django.views.generic import DetailView, ListView
 
@@ -12,12 +14,18 @@ from recipes.models import Recipe
 from utils.pagination import make_pagination
 
 PER_PAGE: Final[int] = config("PER_PAGE", default=6)
+if TYPE_CHECKING:
+    BaseListView = ListView[Recipe]
+    BaseDetailView = DetailView[Recipe]
+else:
+    BaseListView = ListView
+    BaseDetailView = DetailView
 
 
-class RecipeListViewBase(ListView):
+class RecipeListViewBase(BaseListView):
     model = Recipe
     context_object_name = "recipes"
-    ordering = ("-id")
+    ordering = ("-id",)
 
     def get_queryset(self, *args, **kwargs) -> QuerySet[Recipe]:
         qs = super().get_queryset(*args, **kwargs)
@@ -26,14 +34,51 @@ class RecipeListViewBase(ListView):
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         page_obj, pagination_range = make_pagination(
-            self.request, context.get("recipes"), PER_PAGE,
+            self.request, context.get("recipes"), PER_PAGE,  # type: ignore
         )
         context.update({"recipes": page_obj, "pagination_range": pagination_range})
         return context
 
 
+class RecipeApiMixin:
+    """
+    Mixin to share serialization logic between API views.
+
+    This mixin provides a method to serialize Recipe model instances into
+    dictionary format suitable for API responses. It handles date formatting,
+    cover image URL generation, and removes unwanted fields from the output.
+
+    Methods:
+        serialize_recipe(recipe): Converts a Recipe instance to a serialized
+            dictionary with formatted dates, absolute cover image URLs, and
+            filtered fields.
+    """
+
+    def serialize_recipe(self, recipe: Recipe) -> dict[str, Any]:
+        recipe_dict = model_to_dict(recipe)
+        recipe_dict["created_at"] = recipe.created_at.isoformat()
+        recipe_dict["updated_at"] = recipe.updated_at.isoformat()
+        if recipe.cover:
+            recipe_dict["cover"] = self.request.build_absolute_uri(recipe.cover.url)
+        else:
+            recipe_dict["cover"] = ""
+        recipe_dict.pop("is_published", None)
+        return recipe_dict
+
+    def get_serialized_list(self, context: dict[str, Any]) -> list[dict[str, Any]]:
+        page_obj = context.get("recipes")
+        if page_obj and hasattr(page_obj, "object_list"):
+            return [self.serialize_recipe(recipe) for recipe in page_obj.object_list]
+        return []
+
+
 class RecipeListViewHome(RecipeListViewBase):
     template_name = "recipes/pages/home.html"
+
+
+class RecipeListViewHomeApi(RecipeApiMixin, RecipeListViewBase):
+    def render_to_response(self, context, **response_kwargs) -> JsonResponse:  # noqa: ANN001
+        return JsonResponse(data={"recipes": self.get_serialized_list(context)})
 
 
 class RecipeListViewCategory(RecipeListViewBase):
@@ -57,7 +102,18 @@ class RecipeListViewCategory(RecipeListViewBase):
         category_obj = recipes[0].category
         category_name = category_obj.name if category_obj else "Desconhecido"
         context["title"] = f"{category_name} - Category"
+        context["category_name"] = category_name
         return context
+
+
+class RecipeListViewCategoryApi(RecipeApiMixin, RecipeListViewCategory):
+    def render_to_response(self, context, **response_kwargs) -> JsonResponse:  # noqa: ANN001
+        return JsonResponse(
+            data={
+                "recipes": self.get_serialized_list(context),
+                "category_name": context.get("category_name", ""),
+            },
+        )
 
 
 class RecipeListViewSearch(RecipeListViewBase):
@@ -91,7 +147,23 @@ class RecipeListViewSearch(RecipeListViewBase):
         return context
 
 
-class RecipeDetail(DetailView):
+class RecipeListViewSearchApi(RecipeApiMixin, RecipeListViewSearch):
+    def dispatch(self, request: HttpRequest, *args, **kwargs) -> HttpResponseBase:
+        # We check the search term BEFORE any other logic
+        if not self.search_term:
+            return JsonResponse(
+                data={"error": "Search term 'q' is required."},
+                status=400,
+            )
+        return super().dispatch(request, *args, **kwargs)
+
+    def render_to_response(self, context, **response_kwargs) -> JsonResponse:  # noqa: ANN001
+        return JsonResponse(
+            {"recipes": self.get_serialized_list(context), "search_term": self.search_term},  # noqa: E501
+        )
+
+
+class RecipeDetail(BaseDetailView):
     model = Recipe
     context_object_name = "recipe"
     template_name = "recipes/pages/recipe-view.html"
@@ -104,3 +176,9 @@ class RecipeDetail(DetailView):
     def get_queryset(self) -> QuerySet[Recipe]:
         qs = super().get_queryset()
         return qs.filter(is_published=True)
+
+
+class RecipeDetailApi(RecipeApiMixin, RecipeDetail):
+    def render_to_response(self, context, **response_kwargs) -> JsonResponse:  # noqa: ANN001
+        recipe_data = self.serialize_recipe(self.object)
+        return JsonResponse({"recipe": recipe_data})
