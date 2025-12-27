@@ -1,11 +1,12 @@
-from decouple import config
+# pyright: reportConstantRedefinition=false
+from decouple import Csv, config
 
-from .base import *  # noqa: F403
-from .base import MIDDLEWARE
+from core.settings.base import *  # noqa: F403
+from core.settings.base import MIDDLEWARE
 
 DEBUG = False
 
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=lambda v: v.split(","))
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv())
 
 # WhiteNoise + R2
 STORAGES = {
@@ -35,4 +36,4 @@ AWS_S3_CUSTOM_DOMAIN = config("AWS_S3_CUSTOM_DOMAIN")
 
 MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
 
-CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", cast=lambda v: v.split(","))
+CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", cast=Csv())

@@ -7,7 +7,7 @@ from django.http.request import HttpRequest
 
 
 def make_pagination_range(
-    page_range: list[int], range_size: int, current_page: int
+    page_range: list[int], range_size: int, current_page: int,
 ) -> dict[str, bool | int | list[int]]:
     if not page_range:
         return {
@@ -54,7 +54,7 @@ def make_pagination_range(
 
 
 def make_pagination(
-    request: HttpRequest, queryset: QuerySet[Any], per_page: int, range_size: int = 4
+    request: HttpRequest, queryset: QuerySet[Any] | list[Any], per_page: int, range_size: int = 4,
 ) -> tuple[Page, int]:
     try:
         page_number = int(request.GET.get("page", 1))
@@ -64,6 +64,6 @@ def make_pagination(
     page_obj = paginator.get_page(page_number)
 
     pagination_range = make_pagination_range(
-        list(paginator.page_range), range_size, page_number
+        list(paginator.page_range), range_size, page_number,
     )
     return page_obj, pagination_range

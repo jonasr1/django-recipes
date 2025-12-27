@@ -28,8 +28,12 @@ class RecipeListViewBase(BaseListView):
     ordering = ("-id",)
 
     def get_queryset(self, *args, **kwargs) -> QuerySet[Recipe]:
-        qs = super().get_queryset(*args, **kwargs)
-        return qs.filter(is_published=True)
+        return (
+            super()
+            .get_queryset(*args, **kwargs)
+            .filter(is_published=True)
+            .select_related("author", "category")
+        )
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
