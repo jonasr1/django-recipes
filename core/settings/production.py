@@ -1,5 +1,5 @@
 # pyright: reportConstantRedefinition=false
-from decouple import Csv, config
+from decouple import Csv, config  # pyright: ignore[reportMissingTypeStubs]
 
 from core.settings.base import *  # noqa: F403
 from core.settings.base import MIDDLEWARE

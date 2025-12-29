@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 from pathlib import Path
 
-from decouple import config
+from decouple import config  # pyright: ignore[reportMissingTypeStubs]
 from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "recipes",
     "authors",
     "debug_toolbar",
+    "tag",
 ]
 
 MIDDLEWARE = [
@@ -79,21 +80,14 @@ WSGI_APPLICATION = "core.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": config("DATABASE_ENGINE"),
-#         "NAME": config("DATABASE_NAME"),
-#         "USER": config("DATABASE_USER"),
-#         "PASSWORD": config("DATABASE_PASSWORD"),
-#         "HOST": config("DATABASE_HOST"),
-#         "PORT": config("DATABASE_PORT"),
-#     },
-# }
-
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": config("DATABASE_ENGINE"),
+        "NAME": config("DATABASE_NAME"),
+        "USER": config("DATABASE_USER"),
+        "PASSWORD": config("DATABASE_PASSWORD"),
+        "HOST": config("DATABASE_HOST"),
+        "PORT": config("DATABASE_PORT"),
     },
 }
 

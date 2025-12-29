@@ -1,4 +1,4 @@
-from decouple import config
+from decouple import config  # pyright: ignore[reportMissingTypeStubs]
 
 ENVIRONMENT = config("DJANGO_ENV", default="local")
 if ENVIRONMENT == "production":
