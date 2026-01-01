@@ -1,8 +1,6 @@
 import string
 from random import SystemRandom
 
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.text import slugify
 
@@ -10,16 +8,6 @@ from django.utils.text import slugify
 class Tag(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
-
-    # Here begin the fields for the generic relation
-
-    # Represents the model we want to fit here
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    # Represents the id of the row of the model described above
-    object_id = models.CharField(max_length=255)
-    # A field that represents the generic relation that knows the
-    # fields above (content_type and object_id)
-    content_object = GenericForeignKey("content_type", "object_id")
 
     def __str__(self) -> str:
         return self.name

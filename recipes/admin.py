@@ -1,19 +1,11 @@
 from django.contrib import admin
-from django.contrib.contenttypes.admin import GenericStackedInline
 
 from recipes.models import Category, Recipe
-from tag.models import Tag
 
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):  # pyright: ignore[reportMissingTypeArgument]
     ...
-
-
-class TagInline(GenericStackedInline):
-    model = Tag
-    fields = ("name",)
-    extra = 1
 
 
 @admin.register(Recipe)
@@ -26,4 +18,4 @@ class RecipeAdmin(admin.ModelAdmin):  # pyright: ignore[reportMissingTypeArgumen
     list_editable = ("is_published",)
     ordering = ("-id",)
     prepopulated_fields = {"slug": ("title",)}  # noqa: RUF012
-    inlines = (TagInline,)
+    autocomplete_fields = ("tags",)
