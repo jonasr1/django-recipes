@@ -73,5 +73,17 @@
                 {{ recipe.preparation_steps|linebreaksbr }}
             {% endif %}
         </div>
+        {% for tag in recipe.tags.all %}
+            {% if forloop.first %}
+                <p>
+                    Tags: 
+            {% endif %}
+            <a href="{% url 'recipes:tag' tag.slug %}">
+                {{ tag.name }}
+            </a>{% if not forloop.last %}, {% endif %}
+            {% if forloop.last %}
+                </p>
+            {% endif %}
+        {% endfor %}
     {% endif %}
 </div>

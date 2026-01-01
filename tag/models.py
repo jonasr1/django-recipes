@@ -4,6 +4,7 @@ from random import SystemRandom
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.utils.text import slugify
 
 
 class Tag(models.Model):
@@ -15,7 +16,7 @@ class Tag(models.Model):
     # Represents the model we want to fit here
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     # Represents the id of the row of the model described above
-    object_id = models.CharField()
+    object_id = models.CharField(max_length=255)
     # A field that represents the generic relation that knows the
     # fields above (content_type and object_id)
     content_object = GenericForeignKey("content_type", "object_id")
@@ -28,5 +29,5 @@ class Tag(models.Model):
             rand_letters = "".join(
                 SystemRandom().choices(string.ascii_letters + string.digits, k=5),
             )
-            self.slug = rand_letters
+            self.slug = slugify(f"{self.name}-{rand_letters}")
         return super().save(*args, **kwargs)

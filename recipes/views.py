@@ -1,28 +1,33 @@
 from functools import cached_property
-from typing import TYPE_CHECKING, Any, Final
+from typing import Any, Final
 
-from decouple import config
+from decouple import config  # pyright: ignore[reportMissingTypeStubs]
 from django.db.models import Q
+from django.db.models.aggregates import Count
 from django.db.models.query import QuerySet
 from django.forms.models import model_to_dict
+from django.http import HttpResponse
 from django.http.request import HttpRequest
 from django.http.response import Http404, HttpResponseBase, JsonResponse
+from django.shortcuts import render
 from django.utils.http import urlencode
 from django.views.generic import DetailView, ListView
 
 from recipes.models import Recipe
+from tag.models import Tag
 from utils.pagination import make_pagination
 
-PER_PAGE: Final[int] = config("PER_PAGE", default=6)
-if TYPE_CHECKING:
-    BaseListView = ListView[Recipe]
-    BaseDetailView = DetailView[Recipe]
-else:
-    BaseListView = ListView
-    BaseDetailView = DetailView
+PER_PAGE: Final[int] = config("PER_PAGE", default=6, cast=int)
 
 
-class RecipeListViewBase(BaseListView):
+def theory(request: HttpRequest, *args, **kwargs) -> HttpResponse:
+    recipes = Recipe.objects.values("id", "title")
+    number_of_recipes = recipes.aggregate(Count("id"))
+    context = {"recipes": recipes, "number_of_recipes": number_of_recipes["id__count"]}
+    return render(request, "recipes/pages/theory.html", context=context)
+
+
+class RecipeListViewBase(ListView):  # pyright: ignore[reportMissingTypeArgument]
     model = Recipe
     context_object_name = "recipes"
     ordering = ("-id",)
@@ -33,6 +38,7 @@ class RecipeListViewBase(BaseListView):
             .get_queryset(*args, **kwargs)
             .filter(is_published=True)
             .select_related("author", "category")
+            .prefetch_related("tags")
         )
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
@@ -151,6 +157,21 @@ class RecipeListViewSearch(RecipeListViewBase):
         return context
 
 
+class RecipeListViewTag(RecipeListViewBase):
+    template_name = "recipes/pages/tag.html"
+
+    def get_queryset(self, *args, **kwargs) -> QuerySet[Recipe]:
+        qs = super().get_queryset()
+        return qs.filter(tags__slug=self.kwargs.get("slug", ""))
+
+    def get_context_data(self, **kwargs) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        tag = Tag.objects.filter(slug=self.kwargs.get("slug", "")).first()
+        page_title = "No recipes found" if not tag else f"{tag} - Tag |"
+        context.update({"page_title": page_title})
+        return context
+
+
 class RecipeListViewSearchApi(RecipeApiMixin, RecipeListViewSearch):
     def dispatch(self, request: HttpRequest, *args, **kwargs) -> HttpResponseBase:
         # We check the search term BEFORE any other logic
@@ -167,7 +188,7 @@ class RecipeListViewSearchApi(RecipeApiMixin, RecipeListViewSearch):
         )
 
 
-class RecipeDetail(BaseDetailView):
+class RecipeDetail(DetailView):  # pyright: ignore[reportMissingTypeArgument]
     model = Recipe
     context_object_name = "recipe"
     template_name = "recipes/pages/recipe-view.html"

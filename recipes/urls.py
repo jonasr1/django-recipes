@@ -14,20 +14,22 @@ urlpatterns = [
         name="category",
     ),
     path("recipes/<int:pk>/", views.RecipeDetail.as_view(), name="recipe"),
-    path("recipes/api/v1/", views.RecipeListViewHomeApi.as_view(), name="recipes_api"),
+    path("recipes/tags/<slug:slug>", views.RecipeListViewTag.as_view(), name="tag"),
+    path("recipes/api/v1/", views.RecipeListViewHomeApi.as_view(), name="api-list"),
     path(
         "recipes/api/v1/<int:pk>/",
         views.RecipeDetailApi.as_view(),
-        name="recipe_api_detail",
+        name="api-detail",
     ),
     path(
         "recipes/api/v1/category/<int:category_id>/",
         views.RecipeListViewCategoryApi.as_view(),
-        name="category_api",
+        name="category-api",
     ),
     path(
         "recipes/search/api/v1/",
         views.RecipeListViewSearchApi.as_view(),
-        name="search_api",
+        name="search-api",
     ),
+    path("recipes/theory/", views.theory, name="theory"),
 ]
