@@ -1,12 +1,30 @@
+# pyright: reportConstantRedefinition=false
 from core.settings.base import *  # noqa: F403
-from core.settings.base import BASE_DIR, MIDDLEWARE
+from core.settings.base import BASE_DIR
+from core.settings.installed_apps import INSTALLED_APPS
+from core.settings.middlewares import MIDDLEWARE
 
-DEBUG = True  # pyright: ignore[reportConstantRedefinition]
+DEBUG = True
 
 MIDDLEWARE.insert(
     MIDDLEWARE.index("django.middleware.common.CommonMiddleware") + 1,
     "debug_toolbar.middleware.DebugToolbarMiddleware",
 )
+INSTALLED_APPS += ["debug_toolbar"]
+
+STATICFILES_DIRS = [
+    BASE_DIR / "base_static",
+]
+
+# Database
+# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    },
+}
 
 # Local storage (filesystem)
 STORAGES = {

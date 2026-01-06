@@ -2,7 +2,8 @@
 from decouple import Csv, config  # pyright: ignore[reportMissingTypeStubs]
 
 from core.settings.base import *  # noqa: F403
-from core.settings.base import MIDDLEWARE
+from core.settings.base import BASE_DIR
+from core.settings.middlewares import MIDDLEWARE
 
 DEBUG = False
 
@@ -15,6 +16,20 @@ STORAGES = {
     },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
+# Database
+# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+
+DATABASES = {
+    "default": {
+        "ENGINE": config("DATABASE_ENGINE"),
+        "NAME": config("DATABASE_NAME"),
+        "USER": config("DATABASE_USER"),
+        "PASSWORD": config("DATABASE_PASSWORD"),
+        "HOST": config("DATABASE_HOST"),
+        "PORT": config("DATABASE_PORT"),
     },
 }
 
@@ -35,5 +50,7 @@ AWS_S3_FILE_OVERWRITE = False
 AWS_S3_CUSTOM_DOMAIN = config("AWS_S3_CUSTOM_DOMAIN")
 
 MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", cast=Csv())
