@@ -68,11 +68,8 @@ def login_create(request: HttpRequest) -> HttpResponseRedirect:
 
 @login_required(login_url="authors:login", redirect_field_name="next")
 def logout_view(request: HttpRequest) -> HttpResponseRedirect:
-    if not request.POST:
-        messages.error(request, "Invalid logout request")
-        return redirect(reverse("authors:login"))
-    messages.success(request, "Logged out successfully")
     logout(request)
+    messages.success(request, "Logged out successfully")
     return redirect(reverse("authors:login"))
 
 
