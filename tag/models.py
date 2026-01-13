@@ -12,7 +12,7 @@ class Tag(models.Model):
     def __str__(self) -> str:
         return self.name
 
-    def save(self, *args, **kwargs) -> None:  # noqa
+    def save(self, *args, **kwargs) -> None:
         if not self.slug:
             rand_letters = "".join(
                 SystemRandom().choices(string.ascii_letters + string.digits, k=5),

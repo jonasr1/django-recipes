@@ -38,7 +38,7 @@ class RecipeListViewBase(ListView):  # pyright: ignore[reportMissingTypeArgument
             .get_queryset(*args, **kwargs)
             .filter(is_published=True)
             .select_related("author", "category")
-            .prefetch_related("tags")
+            .prefetch_related("tags", "author__profile")
         )
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:

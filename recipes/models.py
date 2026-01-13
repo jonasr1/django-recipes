@@ -48,12 +48,12 @@ class Recipe(models.Model):
         Category, on_delete=models.SET_NULL, null=True, blank=True, default=None,
     )
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    tags = models.ManyToManyField(Tag)
+    tags = models.ManyToManyField(Tag, blank=True, default="")
 
     def __str__(self) -> str:
         return self.title
 
-    def save(self, *args, **kwargs) -> None: # noqa
+    def save(self, *args, **kwargs) -> None:
         if not self.slug:
             base_slug = slugify(self.title)
             slug = base_slug
@@ -67,7 +67,7 @@ class Recipe(models.Model):
     def get_absolute_url(self) -> str:
         return reverse("recipes:recipe", kwargs={"pk": self.pk})
 
-    def clean(self, *args, **kwargs) -> None:  # noqa
+    def clean(self, *args, **kwargs) -> None:
         error_messages = defaultdict(list)
         recipe_from_db = Recipe.objects.filter(title__iexact=self.title).first()
         if recipe_from_db and recipe_from_db.pk != self.pk:

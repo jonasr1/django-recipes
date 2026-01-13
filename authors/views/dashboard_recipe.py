@@ -64,7 +64,7 @@ class DashboardRecipe(View):
 
 
 class DashboardRecipeDelete(DashboardRecipe):
-    def post(self, *args, **kwargs) -> HttpResponse:  # noqa: ANN002, ANN003
+    def post(self, *args, **kwargs) -> HttpResponse:
         recipe = self.get_recipe(self.request.POST.get("id"))
         recipe.delete()
         messages.success(self.request, "Deleted successfully.")
