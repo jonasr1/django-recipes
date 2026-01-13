@@ -14,6 +14,7 @@
     "errorlist",
     "gunicorn",
     "htmlcov",
+    "linebreaksbr",
     "localcode",
     "Minutos",
     "Opcional",

@@ -89,11 +89,10 @@ select = [
     "RUF",
     "N",
 ]
-# ignore = ["T201", "COM812", "F401"]
+ignore = ["ANN002", "ANN003"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = ["ANN201", "S101"]
-"views.py" = ["ANN002", "ANN003"]
 
 [tool.ruff.format]
 quote-style = "double"
@@ -111,6 +110,7 @@ reportUnknownVariableType = "none"
 reportUnknownParameterType = "none"
 reportMissingParameterType = "none"
 reportUnknownArgumentType = "none"
+reportUnusedImport = "none"
 
 [tool.coverage.run]
 branch = true
