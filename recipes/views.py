@@ -10,7 +10,9 @@ from django.http import HttpResponse
 from django.http.request import HttpRequest
 from django.http.response import Http404, HttpResponseBase, JsonResponse
 from django.shortcuts import render
+from django.utils import translation
 from django.utils.http import urlencode
+from django.utils.translation import gettext as _
 from django.views.generic import DetailView, ListView
 
 from recipes.models import Recipe
@@ -46,7 +48,12 @@ class RecipeListViewBase(ListView):  # pyright: ignore[reportMissingTypeArgument
         page_obj, pagination_range = make_pagination(
             self.request, context.get("recipes"), PER_PAGE,  # type: ignore
         )
-        context.update({"recipes": page_obj, "pagination_range": pagination_range})
+        html_language = translation.get_language()
+        context.update({
+            "recipes": page_obj,
+            "pagination_range": pagination_range,
+            "html_language": html_language,
+        })
         return context
 
 
@@ -107,11 +114,11 @@ class RecipeListViewCategory(RecipeListViewBase):
         context = super().get_context_data(**kwargs)
         recipes = context["recipes"]
         if not recipes:
-            context["title"] = "Unknown Category"
+            context["title"] = _("Unknown Category")
             return context
         category_obj = recipes[0].category
-        category_name = category_obj.name if category_obj else "Desconhecido"
-        context["title"] = f"{category_name} - Category"
+        category_name = category_obj.name if category_obj else "Unknown"
+        context["title"] = f"{category_name} - {_("Category")}"
         context["category_name"] = category_name
         return context
 
@@ -147,13 +154,11 @@ class RecipeListViewSearch(RecipeListViewBase):
         context = super().get_context_data(**kwargs)
         search_term = self.search_term
         additional_query = urlencode({"q": search_term})
-        context.update(
-            {
-                "page_title": f"Search for '{search_term}'",
-                "search_term": search_term,
-                "additional_url_query": f"&{additional_query}",
-            },
-        )
+        context.update({
+            "page_title": f"Search for '{search_term}'",
+            "search_term": search_term,
+            "additional_url_query": f"&{additional_query}",
+        })
         return context
 
 
@@ -177,8 +182,7 @@ class RecipeListViewSearchApi(RecipeApiMixin, RecipeListViewSearch):
         # We check the search term BEFORE any other logic
         if not self.search_term:
             return JsonResponse(
-                data={"error": "Search term 'q' is required."},
-                status=400,
+                data={"error": "Search term 'q' is required."}, status=400,
             )
         return super().dispatch(request, *args, **kwargs)
 
