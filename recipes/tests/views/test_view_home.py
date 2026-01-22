@@ -1,4 +1,3 @@
-
 from unittest.mock import patch
 
 from django.urls import resolve, reverse
@@ -14,7 +13,7 @@ class RecipeHomeViewTest(RecipeTestBase):
 
     def test_recipe_home_view_function_is_correct(self) -> None:
         view = resolve(self.url)
-        self.assertIs(view.func.view_class, views.RecipeListViewHome)
+        self.assertIs(view.func.view_class, views.RecipeListViewHome)  # pyright: ignore[reportFunctionMemberAccess]
 
     def test_recipe_home_view_returns_200_status(self) -> None:
         response = self.client.get(self.url)
@@ -32,7 +31,7 @@ class RecipeHomeViewTest(RecipeTestBase):
 
     def test_recipe_home_template_loads_recipes(self) -> None:
         #  need a recipe for this test
-        self.make_recipe()
+        self.make_recipe(is_published=True)
         response = self.client.get(self.url)
         content = response.content.decode("utf-8")
         response_context_recipes = response.context["recipes"]
@@ -49,7 +48,12 @@ class RecipeHomeViewTest(RecipeTestBase):
         )
 
     def test_recipe_home_is_paginated(self) -> None:
-        self.assertPaginationWorks("recipes:home", total_items=8, per_page=3)
+        self.assertPaginationWorks(
+            "recipes:home",
+            total_items=8,
+            per_page=3,
+            recipe_kwargs={"is_published": True},
+        )
 
     def test_recipe_home_invalid_page_query_falls_back_to_page_one(self) -> None:
         self.make_recipe_in_batch()  # creates 8 recipes by default
@@ -58,7 +62,8 @@ class RecipeHomeViewTest(RecipeTestBase):
             self.assertEqual(response.context["recipes"].number, 1)
 
     def test_recipe_home_valid_page_queries_work_normally(self) -> None:
-        self.make_recipe_in_batch()  # creates 8 recipes by default
+        recipes = self.make_recipe_in_batch()  # creates 8 recipes by default
+        self.publish_recipes(recipes)
         with patch("recipes.views.PER_PAGE", new=3):
             response = self.client.get(self.url + "?page=2")
             self.assertEqual(response.context["recipes"].number, 2)

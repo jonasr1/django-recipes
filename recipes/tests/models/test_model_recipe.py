@@ -1,3 +1,4 @@
+
 from django.core.exceptions import ValidationError
 from parameterized import parameterized
 
@@ -26,7 +27,7 @@ class RecipeModelTest(RecipeTestBase):
         recipe.save()
         return recipe
 
-    @parameterized.expand([
+    @parameterized.expand([  # type: ignore
         ("title", 65),
         ("description", 165),
         ("servings_unit", 65),
@@ -38,14 +39,21 @@ class RecipeModelTest(RecipeTestBase):
             self.recipe.full_clean()
 
     def test_recipe_preparation_steps_is_html_is_false_by_default(self) -> None:
-        recipe = self.make_recipe_no_defaults()
+        recipe = self.make_recipe(
+            slug="html-is-false-by-default",
+            author=self.make_author(username="html_is_false"),
+        )
         self.assertFalse(
             recipe.preparation_steps_is_html,
             msg="Recipe preparation_steps_is_html is not False",
         )
 
     def test_recipe_is_published_is_false_by_default(self) -> None:
-        recipe = self.make_recipe_no_defaults()
+        recipe = self.make_recipe(
+            slug="published-is-false-by-default",
+            title="Is Published is false by default",
+            author=self.make_author(username="published is false"),
+        )
         self.assertFalse(
             recipe.is_published,
             msg="Recipe is_published is not False",

@@ -16,6 +16,7 @@
     "errorlist",
     "gunicorn",
     "htmlcov",
+    "LANCZOS",
     "linebreaksbr",
     "localcode",
     "mais",

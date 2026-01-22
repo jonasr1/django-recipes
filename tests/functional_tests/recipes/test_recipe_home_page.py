@@ -27,6 +27,7 @@ class RecipeHomePageFunctionalTest(RecipeBasePageFunctionalTest, RecipeMixin):
         title_needed = "This is what i need"
         recipes[0].title = title_needed
         recipes[0].save()
+        self.publish_recipes(recipes)
         # user opens the page
         self.browser.get(self.live_server_url)
         search_input = self.browser.find_element(
@@ -44,7 +45,8 @@ class RecipeHomePageFunctionalTest(RecipeBasePageFunctionalTest, RecipeMixin):
 
     @patch("recipes.views.PER_PAGE", new=2)
     def test_recipe_home_page_pagination(self) -> None:
-        self.make_recipe_in_batch()
+        recipes = self.make_recipe_in_batch()
+        self.publish_recipes(recipes)
         # user opens the page
         self.browser.get(self.live_server_url)
         # You see that there is a pagination and click on page 2

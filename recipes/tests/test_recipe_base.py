@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 from typing import Any
 from unittest.mock import patch
 
@@ -47,7 +48,7 @@ class RecipeMixin:
         servings_unit: str = "Porções",
         preparation_steps: str = "Recipe Preparation Steps",
         *, preparation_steps_is_html: bool = False,
-        is_published: bool = True,
+        is_published: bool | None = None,
     ) -> Recipe:
         cat_instance = (
             category
@@ -57,19 +58,28 @@ class RecipeMixin:
         author_instance = (
             author if isinstance(author, User) else self.make_author(**(author or {}))
         )
-        return Recipe.objects.create(
-            description=description, author=author_instance,
-            preparation_time=preparation_time,
-            preparation_time_unit=preparation_time_unit,
-            servings=servings, servings_unit=servings_unit, title=title,
-            preparation_steps=preparation_steps, is_published=is_published,
-            preparation_steps_is_html=preparation_steps_is_html, slug=slug,
-            category=cat_instance,
-        )
+        data = {
+            "description": description,
+            "author": author_instance,
+            "preparation_time": preparation_time,
+            "preparation_time_unit": preparation_time_unit,
+            "servings": servings,
+            "servings_unit": servings_unit,
+            "title": title,
+            "preparation_steps": preparation_steps,
+            "preparation_steps_is_html": preparation_steps_is_html,
+            "slug": slug,
+            "category": cat_instance,
+        }
+
+        if is_published is not None:
+            data["is_published"] = is_published
+
+        return Recipe.objects.create(**data)
 
     def create_recipes(self, total_items: int, recipe_kwargs: dict[str, Any]) -> None:
         for i in range(total_items):
-            kwargs = {"slug": f"r{i}", "author": {"username": f"u{i}"}}
+            kwargs: dict[str, Any] = {"slug": f"r{i}", "author": {"username": f"u{i}"}}
             kwargs.update(recipe_kwargs)
             self.make_recipe(**kwargs)
 
@@ -122,6 +132,11 @@ class RecipeMixin:
             url = self.build_url(url_name, url_kwargs, query_params)
             response = self.client.get(url)
             self.check_pagination(response, total_items, per_page)
+
+    def publish_recipes(self, recipes: Iterable[Recipe]) -> None:
+        Recipe.objects.filter(
+            pk__in=[recipe.pk for recipe in recipes],
+        ).update(is_published=True)
 
 
 class RecipeTestBase(TestCase, RecipeMixin):

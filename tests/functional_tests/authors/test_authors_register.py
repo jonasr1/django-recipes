@@ -61,7 +61,7 @@ class AuthorsRegisterTest(AuthorsBaseTest):
             email_field.send_keys("email@invalid")
             form.submit()
             error_element = self.get_error("email")
-            self.assertIn("Enter a valid email address.", error_element.text)
+            self.assertIn("Informe um endereço de email válido.", error_element.text)
         self.form_field_test_with_callback(callback)
 
     def test_password_do_not_match(self) -> None:

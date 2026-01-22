@@ -66,11 +66,14 @@ def login_create(request: HttpRequest) -> HttpResponseRedirect:
     return redirect(reverse("authors:dashboard"))
 
 
-@login_required(login_url="authors:login", redirect_field_name="next")
+@login_required(login_url="authors:login")
 def logout_view(request: HttpRequest) -> HttpResponseRedirect:
+    if request.method != "POST":
+        messages.error(request, "Invalid logout request")
+        return redirect("authors:login")
     logout(request)
     messages.success(request, "Logged out successfully")
-    return redirect(reverse("authors:login"))
+    return redirect("authors:login")
 
 
 @login_required(login_url="authors:login", redirect_field_name="next")

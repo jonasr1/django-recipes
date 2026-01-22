@@ -8,7 +8,7 @@ class RecipeCategoryViewTest(RecipeTestBase):
     def test_recipe_category_template_loads_recipes(self) -> None:
         needed_title = "This is category test"
         #  Need a recipe for this test
-        self.make_recipe(title=needed_title)
+        self.make_recipe(title=needed_title, is_published=True)
         response = self.client.get(reverse("recipes:category", args=(1,)))
         content = response.content.decode("utf-8")
         self.assertIn(needed_title, content)
@@ -30,14 +30,14 @@ class RecipeCategoryViewTest(RecipeTestBase):
 
     def test_recipe_category_view_function_is_correct(self) -> None:
         view = resolve(reverse("recipes:category", kwargs={"category_id": 1}))
-        self.assertIs(view.func.view_class, views.RecipeListViewCategory)
+        self.assertIs(view.func.view_class, views.RecipeListViewCategory)  # pyright: ignore[reportFunctionMemberAccess]
 
     def test_recipe_category_is_paginated(self) -> None:
         category = self.make_category(name="Sobremesas")
         self.assertPaginationWorks(
             "recipes:category",
             url_kwargs={"category_id": category.pk},
-            recipe_kwargs={"category": category},
+            recipe_kwargs={"category": category, "is_published": True},
         )
 
     def test_recipe_category_view_page_title_is_correct(self) -> None:
@@ -47,4 +47,4 @@ class RecipeCategoryViewTest(RecipeTestBase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertIn("title", response.context)
-        self.assertEqual(response.context["title"], "Sobremesas - Category")
+        self.assertEqual(response.context["title"], "Sobremesas - Categoria")

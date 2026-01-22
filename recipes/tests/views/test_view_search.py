@@ -8,7 +8,7 @@ class RecipeSearchViewTest(RecipeTestBase):
     def test_recipe_search_uses_correct_view_function(self) -> None:
         url = reverse("recipes:search")
         resolved = resolve(url)
-        self.assertIs(resolved.func.view_class, views.RecipeListViewSearch)
+        self.assertIs(resolved.func.view_class, views.RecipeListViewSearch)  # pyright: ignore[reportFunctionMemberAccess]
 
     def test_recipe_search_loads_correct_template(self) -> None:
         url = reverse("recipes:search")
@@ -29,8 +29,12 @@ class RecipeSearchViewTest(RecipeTestBase):
         title1 = "This is recipe one"
         title2 = "This is recipe two"
 
-        recipe1 = self.make_recipe(slug="one", title=title1, author={"username": "one"})
-        recipe2 = self.make_recipe(slug="two", title=title2, author={"username": "two"})
+        recipe1 = self.make_recipe(
+            slug="one", title=title1, is_published=True, author={"username": "one"},
+        )
+        recipe2 = self.make_recipe(
+            slug="two", title=title2, is_published=True, author={"username": "two"},
+        )
 
         search_url = reverse("recipes:search")
         response1 = self.client.get(f"{search_url}?q={title1}")
@@ -51,7 +55,7 @@ class RecipeSearchViewTest(RecipeTestBase):
         self.assertPaginationWorks(
             "recipes:search",
             query_params={"q": term},
-            recipe_kwargs={"title": f"{term} incrível"},
+            recipe_kwargs={"title": f"{term} incrível", "is_published": True},
         )
 
     def test_search_view_page_title_is_correct(self) -> None:
