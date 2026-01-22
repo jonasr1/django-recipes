@@ -1,12 +1,16 @@
+import contextlib
 import itertools
+import os
 from collections import defaultdict
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
 from django.forms import ValidationError
 from django.urls import reverse
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+from PIL import Image
 
 from tag.models import Tag
 
@@ -71,10 +75,25 @@ class Recipe(models.Model):
                     break
                 slug = f"{base_slug}-{i}"
             self.slug = slug
-        super().save(*args, **kwargs)
+        saved = super().save(*args, **kwargs)
+        if self.cover:
+            with contextlib.suppress(FileNotFoundError):
+                self.resize_image(self.cover, 840)
+        return saved
 
     def get_absolute_url(self) -> str:
         return reverse("recipes:recipe", kwargs={"pk": self.pk})
+
+    def resize_image(self, image: Image.Image, new_width: int = 840) -> None:
+        imagem_full_path = os.path.join(settings.MEDIA_ROOT, image.name)
+        imagem_pillow = Image.open(imagem_full_path)
+        original_width, original_height = imagem_pillow.size
+        if original_width <= new_width:
+            imagem_pillow.close()
+            return
+        new_height = round((original_height * new_width) / original_width)
+        new_image = imagem_pillow.resize((new_width, new_height), Image.LANCZOS)
+        new_image.save(imagem_full_path, optimize=True, quality=50)
 
     def clean(self, *args, **kwargs) -> None:
         error_messages = defaultdict(list)
