@@ -128,7 +128,7 @@ class RecipeMixin:
         recipe_kwargs = recipe_kwargs or {}
         query_params = query_params or {}
         self.create_recipes(total_items, recipe_kwargs=recipe_kwargs)
-        with patch("recipes.views.PER_PAGE", new=per_page):
+        with patch("recipes.views.site.PER_PAGE", new=per_page):
             url = self.build_url(url_name, url_kwargs, query_params)
             response = self.client.get(url)
             self.check_pagination(response, total_items, per_page)

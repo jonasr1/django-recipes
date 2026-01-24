@@ -2,8 +2,8 @@ from unittest.mock import patch
 
 from django.urls import resolve, reverse
 
-from recipes import views
 from recipes.tests.test_recipe_base import RecipeTestBase
+from recipes.views import site
 
 
 class RecipeHomeViewTest(RecipeTestBase):
@@ -13,7 +13,7 @@ class RecipeHomeViewTest(RecipeTestBase):
 
     def test_recipe_home_view_function_is_correct(self) -> None:
         view = resolve(self.url)
-        self.assertIs(view.func.view_class, views.RecipeListViewHome)  # pyright: ignore[reportFunctionMemberAccess]
+        self.assertIs(view.func.view_class, site.RecipeListViewHome)  # pyright: ignore[reportFunctionMemberAccess]
 
     def test_recipe_home_view_returns_200_status(self) -> None:
         response = self.client.get(self.url)
@@ -57,14 +57,14 @@ class RecipeHomeViewTest(RecipeTestBase):
 
     def test_recipe_home_invalid_page_query_falls_back_to_page_one(self) -> None:
         self.make_recipe_in_batch()  # creates 8 recipes by default
-        with patch("recipes.views.PER_PAGE", new=3):
+        with patch("recipes.views.site.PER_PAGE", new=3):
             response = self.client.get(self.url + "?page=12A")
             self.assertEqual(response.context["recipes"].number, 1)
 
     def test_recipe_home_valid_page_queries_work_normally(self) -> None:
         recipes = self.make_recipe_in_batch()  # creates 8 recipes by default
         self.publish_recipes(recipes)
-        with patch("recipes.views.PER_PAGE", new=3):
+        with patch("recipes.views.site.PER_PAGE", new=3):
             response = self.client.get(self.url + "?page=2")
             self.assertEqual(response.context["recipes"].number, 2)
             response = self.client.get(self.url + "?page=3")

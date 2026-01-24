@@ -6,6 +6,8 @@ from collections import defaultdict
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models import F, Value
+from django.db.models.functions import Concat
 from django.forms import ValidationError
 from django.urls import reverse
 from django.utils.text import slugify
@@ -24,6 +26,21 @@ class Category(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+
+class RecipeManager(models.Manager):  # pyright: ignore[reportMissingTypeArgument]
+    def get_published(self):  # noqa: ANN201
+        return self.filter(
+            is_published=True,
+        ).annotate(
+            author_full_name=Concat(
+                F("author__first_name"), Value(" "),
+                F("author__last_name"), Value(" ("),
+                F("author__username"), Value(")"),
+            ),
+        ).order_by("-id") \
+            .select_related("category", "author") \
+            .prefetch_related("tags")
 
 
 class Recipe(models.Model):
@@ -58,6 +75,7 @@ class Recipe(models.Model):
     )
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     tags = models.ManyToManyField(Tag, blank=True, default="")
+    objects = RecipeManager()
 
     class Meta:
         verbose_name = _("Recipe")

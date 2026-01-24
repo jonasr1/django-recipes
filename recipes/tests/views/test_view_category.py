@@ -1,7 +1,7 @@
 from django.urls import resolve, reverse
 
-from recipes import views
 from recipes.tests.test_recipe_base import RecipeTestBase
+from recipes.views import site
 
 
 class RecipeCategoryViewTest(RecipeTestBase):
@@ -30,7 +30,7 @@ class RecipeCategoryViewTest(RecipeTestBase):
 
     def test_recipe_category_view_function_is_correct(self) -> None:
         view = resolve(reverse("recipes:category", kwargs={"category_id": 1}))
-        self.assertIs(view.func.view_class, views.RecipeListViewCategory)  # pyright: ignore[reportFunctionMemberAccess]
+        self.assertIs(view.func.view_class, site.RecipeListViewCategory)  # pyright: ignore[reportFunctionMemberAccess]
 
     def test_recipe_category_is_paginated(self) -> None:
         category = self.make_category(name="Sobremesas")

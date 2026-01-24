@@ -43,7 +43,7 @@ class RecipeHomePageFunctionalTest(RecipeBasePageFunctionalTest, RecipeMixin):
         # The user sees what they were looking for on the page
         self.assertIn(title_needed, main_content.text)
 
-    @patch("recipes.views.PER_PAGE", new=2)
+    @patch("recipes.views.site.PER_PAGE", new=2)
     def test_recipe_home_page_pagination(self) -> None:
         recipes = self.make_recipe_in_batch()
         self.publish_recipes(recipes)

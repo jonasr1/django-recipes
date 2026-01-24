@@ -19,6 +19,7 @@ dependencies = [
     "olefile<1.0,>=0.47",
     "pillow-avif-plugin<2.0.0,>=1.5.2",
     "django-debug-toolbar<7.0.0,>=6.1.0",
+    "djangorestframework>=3.16.1",
 ]
 name = "project1"
 version = "0.1.0"

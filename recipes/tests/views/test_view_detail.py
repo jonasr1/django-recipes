@@ -1,13 +1,13 @@
 from django.urls import resolve, reverse
 
-from recipes import views
 from recipes.tests.test_recipe_base import RecipeTestBase
+from recipes.views import site
 
 
 class RecipeDetailViewTest(RecipeTestBase):
     def test_recipe_detail_view_function_is_correct(self) -> None:
         view = resolve(reverse("recipes:recipe", args=(1,)))
-        self.assertIs(view.func.view_class, views.RecipeDetail)  # pyright: ignore[reportFunctionMemberAccess]
+        self.assertIs(view.func.view_class, site.RecipeDetail)  # pyright: ignore[reportFunctionMemberAccess]
 
     def test_recipe_detail_view_returns_404_if_no_recipes_found(self) -> None:
         response = self.client.get(
