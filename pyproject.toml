@@ -5,12 +5,8 @@ authors = [
 requires-python = "<4.0,>=3.12"
 dependencies = [
     "django<6.0,>=5.2",
-    "faker<38.0.0,>=37.3.0",
     "pillow<12.0.0,>=11.2.1",
-    "pytest<9.0.0,>=8.3.5",
-    "pytest-django<5.0.0,>=4.11.1",
     "python-decouple<4.0,>=3.8",
-    "django-stubs<6.0.0,>=5.2.2",
     "gunicorn<24.0.0,>=23.0.0",
     "whitenoise<7.0.0,>=6.11.0",
     "psycopg[binary]<4.0.0,>=3.3.2",
@@ -18,7 +14,6 @@ dependencies = [
     "boto3<2.0.0,>=1.42.12",
     "olefile<1.0,>=0.47",
     "pillow-avif-plugin<2.0.0,>=1.5.2",
-    "django-debug-toolbar<7.0.0,>=6.1.0",
     "djangorestframework>=3.16.1",
 ]
 name = "project1"
@@ -30,10 +25,15 @@ dev = [
     "pytest-watch<5.0.0,>=4.2.0",
     "parameterized<1.0.0,>=0.9.0",
     "coverage<8.0.0,>=7.9.1",
-    "django-stubs<6.0.0,>=5.2.1",
+    "django-stubs>=5.2.1,<6.0.0",
     "mypy-extensions<2.0.0,>=1.1.0",
     "mypy<2.0.0,>=1.16.1",
     "selenium<5.0.0,>=4.35.0",
+    "pyrefly>=0.50.0",
+    "pytest>=8.4.2",
+    "pytest-django>=4.11.1",
+    "faker>=40.1.2",
+    "django-debug-toolbar>=6.2.0",
 ]
 
 [tool.pdm]
@@ -51,6 +51,7 @@ bad-assignment = false
 bad-return = false
 unknown-name = false
 bad-argument-type = false
+bad-override = false
 
 [tool.ruff]
 line-length = 88
