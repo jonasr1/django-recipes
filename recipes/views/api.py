@@ -23,16 +23,10 @@ class RecipeAPIv2ViewSet(ModelViewSet):
     serializer_class = RecipeSerializer
     pagination_class = RecipeAPIv2Pagination
     permission_classes = [IsAuthenticatedOrReadOnly]
-    http_method_names = ["GET", "PATCH", "DELETE", "HEAD", "OPTIONS"]
-
-    def get_object(self) -> Recipe:
-        pk: int = self.kwargs.get("pk", "")
-        obj = get_object_or_404(self.get_queryset(), pk=pk)
-        self.check_object_permissions(self.request, obj)
-        return obj
+    http_method_names = ["get", "post", "patch", "delete", "head", "options"]
 
     def get_permissions(self):  # noqa: ANN201
-        if self.request.method in {"PATCH", "DELETE"}:
+        if self.action in {"partial_update", "destroy"}:
             return [IsAuthenticatedOrReadOnly(), IsOwner()]
         return super().get_permissions()
 
@@ -43,21 +37,6 @@ class RecipeAPIv2ViewSet(ModelViewSet):
         headers = self.get_success_headers(serializer.data)
         return Response(
             serializer.data, status=status.HTTP_201_CREATED, headers=headers,
-        )
-
-    def partial_update(self, request: Request, *args, **kwargs) -> Response:
-        recipe = self.get_object()
-        serializer = RecipeSerializer(
-            instance=recipe,
-            data=request.data,
-            many=False,
-            context={"request": request},
-            partial=True,
-        )
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(
-            serializer.data,
         )
 
 
