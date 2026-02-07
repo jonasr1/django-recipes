@@ -37,9 +37,10 @@ class RecipeHomePageFunctionalTest(RecipeBasePageFunctionalTest, RecipeMixin):
         search_input.send_keys(title_needed)
         search_input.send_keys(Keys.ENTER)
         # Wait until the main list has the expected text
-        main_content = WebDriverWait(self.browser, 10).until(
+        WebDriverWait(self.browser, 10).until(
             ec.visibility_of_element_located((By.CLASS_NAME, "main-content-list")),
         )
+        main_content = self.browser.find_element(By.CLASS_NAME, "main-content-list")
         # The user sees what they were looking for on the page
         self.assertIn(title_needed, main_content.text)
 

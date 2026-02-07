@@ -1,5 +1,4 @@
 # ruff: noqa: RUF012
-from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
@@ -30,14 +29,15 @@ class RecipeAPIv2ViewSet(ModelViewSet):
             return [IsAuthenticatedOrReadOnly(), IsOwner()]
         return super().get_permissions()
 
-    def create(self, request: Request, *args, **kwargs) -> Response:
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(author=request.user)
-        headers = self.get_success_headers(serializer.data)
-        return Response(
-            serializer.data, status=status.HTTP_201_CREATED, headers=headers,
-        )
+    def get_queryset(self):  # noqa: ANN201
+        qs = super().get_queryset()
+        category_id = self.request.query_params.get("category_id")
+        if category_id and category_id.isnumeric():
+            qs = qs.filter(category_id=category_id)
+        return qs
+
+    def perform_create(self, serializer: RecipeSerializer) -> None:
+        serializer.save(author=self.request.user)
 
 
 @api_view(["GET"])  # type: ignore[misc]

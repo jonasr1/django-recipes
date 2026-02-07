@@ -12,7 +12,7 @@ from core.settings.rest_framework import *
 from core.settings.templates import *
 
 ENVIRONMENT = config("DJANGO_ENV", default="local")
-if ENVIRONMENT == "production":
+if ENVIRONMENT == "production":  # pragma: no cover
     from .production import *
 else:
     from .local import *

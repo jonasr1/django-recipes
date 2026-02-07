@@ -23,7 +23,6 @@ description = ""
 
 [dependency-groups]
 dev = [
-    "pytest-watch<5.0.0,>=4.2.0",
     "parameterized<1.0.0,>=0.9.0",
     "coverage<8.0.0,>=7.9.1",
     "django-stubs>=5.2.1,<6.0.0",
@@ -35,6 +34,7 @@ dev = [
     "pytest-django>=4.11.1",
     "faker>=40.1.2",
     "django-debug-toolbar>=6.2.0",
+    "pytest-watcher>=0.6.3",
 ]
 
 [tool.pdm]
@@ -131,4 +131,15 @@ omit = [
     "manage.py",
     "**/migrations/*.py",
     "utils/browser.py",
+    "tests/functional_tests/recipes/base.py",
+    "tests/functional_tests/authors/base.py"
 ]
+
+[tool.pytest-watcher]
+now = false
+clear = true
+notify_on_failure = false
+delay = 0.2
+runner = "pytest"
+patterns = ["*.py"]
+ignore_patterns = [".venv", ".git", "__pycache__", "locale"]

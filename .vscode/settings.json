@@ -14,6 +14,7 @@
     "doctest",
     "endfor",
     "errorlist",
+    "filterset",
     "gunicorn",
     "htmlcov",
     "LANCZOS",
@@ -37,6 +38,7 @@
     "ssword",
     "Temporário",
     "teste",
+    "testslug",
     "venv",
     "webelement"
   ],
