@@ -8,6 +8,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "storages",
+    "corsheaders",
     "rest_framework_simplejwt",
     "rest_framework",
     "utils",

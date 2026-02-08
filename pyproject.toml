@@ -16,6 +16,7 @@ dependencies = [
     "pillow-avif-plugin<2.0.0,>=1.5.2",
     "djangorestframework>=3.16.1",
     "djangorestframework-simplejwt>=5.5.1",
+    "django-cors-headers>=4.9.0",
 ]
 name = "project1"
 version = "0.1.0"
@@ -142,4 +143,5 @@ notify_on_failure = false
 delay = 0.2
 runner = "pytest"
 patterns = ["*.py"]
+runner_args = ["recipes/tests.py", "-rP"]
 ignore_patterns = [".venv", ".git", "__pycache__", "locale"]

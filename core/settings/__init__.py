@@ -1,6 +1,7 @@
 from decouple import config  # pyright: ignore[reportMissingTypeStubs]
 
 from core.settings.base import *
+from core.settings.cors_headers import *
 
 # ruff: noqa: F403
 from core.settings.i18n import *
