@@ -48,7 +48,7 @@ class RecipeAPIMixin(RecipeMixin):
             reverse("recipes:token_obtain_pair"), data={**userdata},
         )
 
-    def get_auth_data(self, username: str = "user", password: str = "pass") -> AuthData:  # noqa: E501, S107
+    def get_auth_data(self, username: str = "user", password: str = "pass") -> AuthData:  # noqa: S107
         userdata = self.build_jwt_user_data(username, password)
         user = self.create_jwt_user(userdata)
         response = self.request_jwt_token(userdata)

@@ -17,6 +17,7 @@ dependencies = [
     "djangorestframework>=3.16.1",
     "djangorestframework-simplejwt>=5.5.1",
     "django-cors-headers>=4.9.0",
+    "pytest-django>=4.11.1",
 ]
 name = "project1"
 version = "0.1.0"
@@ -111,7 +112,7 @@ quote-style = "double"
 indent-style = "space"
 line-ending = "lf"
 
-[tool.pyright]
+[tool.basedpyright]
 typeCheckingMode = "strict"
 pythonVersion = "3.12"
 include = ["."]
@@ -123,6 +124,8 @@ reportUnknownParameterType = "none"
 reportMissingParameterType = "none"
 reportUnknownArgumentType = "none"
 reportUnusedImport = "none"
+reportMissingTypeArgument = "none"
+reportUntypedFunctionDecorator = "none"
 
 [tool.coverage.run]
 branch = true
